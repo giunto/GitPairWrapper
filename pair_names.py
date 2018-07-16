@@ -1,5 +1,9 @@
 import sys
 
+# --Global variables-- #
+consonants = 'bcdfghjklmnpqrstvwxz'
+vowels = 'aeiou'
+
 # --Helper classes-- #
 
 class UserName:
@@ -22,36 +26,30 @@ class SplitName:
 # --Helper functions and stuff-- #
 
 def letter_is_consonant(name, index):
-    consonants = 'bcdfghjklmnpqrstvwxz'
-    letter = name[index]
+    letter = name[index].lower()
+    next_letter = name[index + 1].lower()
 
-    return letter.lower() in consonants or y_is_consonant(name, index)
+    return letter in consonants or (letter == 'y' and next_letter in vowels)
 
-def letter_is_vowel(letter):
-    vowels = 'aeiouy'
+def letter_is_vowel(name, index):
+    letter = name[index].lower()
 
-    return letter.lower() in vowels 
+    return letter in vowels or (letter == 'y' and name[index + 1].lower() in consonants)
 
 def second_letter_is_silent_e(name, index):
     letter = name[index + 1]
 
     return index + 1 == len(name) - 1 and letter.lower() == 'e'
 
-def y_is_consonant(name, index):
-    letter = name[index]
-    next_letter = name[index + 1]
-
-    return letter.lower() == 'y' and letter_is_vowel(next_letter)
-
 def can_split(name, index):
     first_letter = name[index]
     second_letter = name[index + 1]
 
     return (letter_is_consonant(name, index) and 
-        letter_is_vowel(second_letter) and 
+        letter_is_vowel(name, index + 1) and 
         not second_letter_is_silent_e(name, index) and
-        not (first_letter.lower() == 'q' and second_letter.lower() == 'u' and letter_is_vowel(name[index + 2]) and not letter_is_consonant(name, index + 2)) or
-        (first_letter.lower() == 'u' and name[index - 1].lower() == 'q' and letter_is_vowel(second_letter) and not letter_is_consonant(name, index + 1)))
+        not (first_letter.lower() == 'q' and second_letter.lower() == 'u' and letter_is_vowel(name, index + 2)) or
+        (first_letter.lower() == 'u' and name[index - 1].lower() == 'q' and letter_is_vowel(name, index + 1)))
 
 # --Main functions-- #
 
@@ -62,7 +60,7 @@ def parse_name(name):
     if name_length < 2:
         return results
 
-    if letter_is_vowel(name[0]) and not y_is_consonant(name, 0):
+    if letter_is_vowel(name, 0):
         results.append(SplitName('', name))
 
     for i in range(name_length):
