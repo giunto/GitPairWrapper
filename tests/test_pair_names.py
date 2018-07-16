@@ -60,7 +60,11 @@ class TestParseName(unittest.TestCase):
             SplitName('qu', 'enya'),
             SplitName('queny', 'a')
         ]],
-        ['KYLE', [SplitName('K', 'YLE')]]
+        ['KYLE', [SplitName('K', 'YLE')]],
+        ['qu', [SplitName('q', 'u')]],
+        ['yy', [SplitName('', 'yy')]],
+        ['FLYYY', [SplitName('FL', 'YYY')]],
+        ['qy', [SplitName('q', 'y')]]
     ])
     def test_parse_name(self, name, split_names):
         result = pair_names.parse_name(name)

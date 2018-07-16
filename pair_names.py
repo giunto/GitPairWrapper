@@ -34,7 +34,8 @@ def letter_is_consonant(name, index):
 def letter_is_vowel(name, index):
     letter = name[index].lower()
 
-    return letter in vowels or (letter == 'y' and name[index + 1].lower() in consonants)
+    return (letter in vowels or 
+        (letter == 'y' and ((index + 1) not in range(len(name)) or name[index + 1].lower() in consonants or name[index + 1].lower() == 'y')))
 
 def second_letter_is_silent_e(name, index):
     letter = name[index + 1]
@@ -48,7 +49,7 @@ def can_split(name, index):
     return (letter_is_consonant(name, index) and 
         letter_is_vowel(name, index + 1) and 
         not second_letter_is_silent_e(name, index) and
-        not (first_letter.lower() == 'q' and second_letter.lower() == 'u' and letter_is_vowel(name, index + 2)) or
+        not ((index + 2) in range(len(name)) and first_letter.lower() == 'q' and second_letter.lower() == 'u' and letter_is_vowel(name, index + 2)) or
         (first_letter.lower() == 'u' and name[index - 1].lower() == 'q' and letter_is_vowel(name, index + 1)))
 
 # --Main functions-- #
@@ -65,7 +66,7 @@ def parse_name(name):
 
     for i in range(name_length):
         if i != (name_length - 1) and can_split(name, i):
-            results.append(SplitName(name[0:(i + 1)], name[(i + 1):name_length]))
+            results.append(SplitName(name[:(i + 1)], name[(i + 1):]))
 
     return results
 
