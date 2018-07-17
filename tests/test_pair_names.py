@@ -5,15 +5,26 @@ from pair_names import SplitName
 class TestParseName(unittest.TestCase):
 
     @parameterized.expand([
+        # Basic test cases
         ['brian', [SplitName('br', 'ian')]],
         ['BRIAN', [SplitName('BR', 'IAN')]],
         ['katie', [
             SplitName('k', 'atie'), 
             SplitName('kat', 'ie')
         ]],
+        ['ulo', [
+            SplitName('', 'ulo'), 
+            SplitName('ul', 'o')
+        ]],
+
+        # Silent e at the end of words should not be parsed
         ['blake', [SplitName('bl', 'ake')]],
         ['BLAKE', [SplitName('BL', 'AKE')]],
+
+        # The letter y should be treated as a vowel when it comes before a consonant
+        # If it comes before a vowel it is treated as a consonant
         ['kyle', [SplitName('k', 'yle')]],
+        ['KYLE', [SplitName('K', 'YLE')]],
         ['yani', [
             SplitName('y', 'ani'), 
             SplitName('yan', 'i')
@@ -22,6 +33,15 @@ class TestParseName(unittest.TestCase):
             SplitName('Y', 'ANI'), 
             SplitName('YAN', 'I')
         ]],
+        ['quenya', [
+            SplitName('qu', 'enya'),
+            SplitName('queny', 'a')
+        ]],
+        ['FLYYY', [SplitName('FL', 'YYY')]],
+
+        # The letter combination qu should be treated as a consonant if
+        # a vowel directly follows.
+        # If a consonant follows u then q and u are split.
         ['quigley', [
             SplitName('qu', 'igley'),
             SplitName('quigl', 'ey')
@@ -30,19 +50,6 @@ class TestParseName(unittest.TestCase):
             SplitName('QU','IGLEY'),
             SplitName('QUIGL', 'EY')
         ]],
-        ['ulo', [
-            SplitName('', 'ulo'), 
-            SplitName('ul', 'o')
-        ]],
-        ['ypsilanti', [
-            SplitName('', 'ypsilanti'), 
-            SplitName('yps', 'ilanti'), 
-            SplitName('ypsil', 'anti'), 
-            SplitName('ypsilant', 'i')
-        ]],
-        ['', []],
-        ['a', []],
-        ['b', []],
         ['quran', [
             SplitName('q', 'uran'),
             SplitName('qur', 'an')
@@ -56,15 +63,43 @@ class TestParseName(unittest.TestCase):
             SplitName('q', 'uya'),
             SplitName('quy', 'a')
         ]],
-        ['quenya', [
-            SplitName('qu', 'enya'),
-            SplitName('queny', 'a')
-        ]],
-        ['KYLE', [SplitName('K', 'YLE')]],
         ['qu', [SplitName('q', 'u')]],
+        ['qy', [SplitName('q', 'y')]],
+
+        # Words that start with a vowel should be parsed before the word starts.
+        ['ypsilanti', [
+            SplitName('', 'ypsilanti'), 
+            SplitName('yps', 'ilanti'), 
+            SplitName('ypsil', 'anti'), 
+            SplitName('ypsilant', 'i')
+        ]],
+
+        # If y follows another y, both should be treated as vowels.
         ['yy', [SplitName('', 'yy')]],
-        ['FLYYY', [SplitName('FL', 'YYY')]],
-        ['qy', [SplitName('q', 'y')]]
+
+        # Ignore strings less than 2 characters
+        ['', []],
+        ['a', []],
+        ['b', []],
+
+        # Nonalphabetic characters are treated like consonants
+        ['two-words', [
+            SplitName('tw', 'o-words'),
+            SplitName('two-w', 'ords')
+        ]],
+
+        # The silent e rule still applies if e is followed by an nonalphabetic character.
+        ['white space', [
+            SplitName('wh', 'ite space'),
+            SplitName('white sp', 'ace')
+        ]],
+        ['the,exclamation!point', [
+            SplitName('the,', 'exclamation!point'),
+            SplitName('the,excl', 'amation!point'),
+            SplitName('the,exclam', 'ation!point'),
+            SplitName('the,exclamat', 'ion!point'),
+            SplitName('the,exclamation!p', 'oint')
+        ]]
     ])
     def test_parse_name(self, name, split_names):
         result = pair_names.parse_name(name)

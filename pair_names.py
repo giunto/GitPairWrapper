@@ -37,16 +37,21 @@ def letter_is_vowel(name, index):
     return (letter in vowels or 
         (letter == 'y' and ((index + 1) not in range(len(name)) or name[index + 1].lower() in consonants or name[index + 1].lower() == 'y')))
 
+def letter_is_unknown(name, index):
+    letter = name[index].lower()
+
+    return letter not in consonants and letter not in vowels and letter != 'y'
+
 def second_letter_is_silent_e(name, index):
     letter = name[index + 1]
 
-    return index + 1 == len(name) - 1 and letter.lower() == 'e'
+    return (index + 1 == len(name) - 1 or letter_is_unknown(name, index + 2)) and letter.lower() == 'e'
 
 def can_split(name, index):
     first_letter = name[index]
     second_letter = name[index + 1]
 
-    return (letter_is_consonant(name, index) and 
+    return ((letter_is_consonant(name, index) or letter_is_unknown(name, index)) and 
         letter_is_vowel(name, index + 1) and 
         not second_letter_is_silent_e(name, index) and
         not ((index + 2) in range(len(name)) and first_letter.lower() == 'q' and second_letter.lower() == 'u' and letter_is_vowel(name, index + 2)) or
