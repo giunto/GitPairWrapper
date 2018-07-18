@@ -42,10 +42,19 @@ def letter_is_unknown(name, index):
 
     return letter not in consonants and letter not in vowels and letter != 'y'
 
+def number_of_vowels(name):
+    total = 0
+    name = name.lower()
+
+    for vowel in (vowels + 'y'):
+        total += name.count(vowel)
+
+    return total
+
 def second_letter_is_silent_e(name, index):
     letter = name[index + 1]
 
-    return (index + 1 == len(name) - 1 or letter_is_unknown(name, index + 2)) and letter.lower() == 'e'
+    return (index + 1 == len(name) - 1 or letter_is_unknown(name, index + 2)) and letter.lower() == 'e' and name[index].lower() != 'y' and number_of_vowels(name[:(index + 2)]) > 1
 
 def can_split(name, index):
     first_letter = name[index]

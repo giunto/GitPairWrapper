@@ -20,6 +20,14 @@ class TestParseName(unittest.TestCase):
         # Silent e at the end of words should not be parsed
         ['blake', [SplitName('bl', 'ake')]],
         ['BLAKE', [SplitName('BL', 'AKE')]],
+        ['the', [SplitName('th', 'e')]],
+        ['ye', [SplitName('y', 'e')]],
+        ['KANYE', [
+            SplitName('K', 'ANYE'),
+            SplitName('KANY', 'E')
+        ]],
+        ['tree', [SplitName('tr', 'ee')]],
+        ['ee', [SplitName('', 'ee')]],
 
         # The letter y should be treated as a vowel when it comes before a consonant
         # If it comes before a vowel it is treated as a consonant
@@ -94,11 +102,19 @@ class TestParseName(unittest.TestCase):
             SplitName('white sp', 'ace')
         ]],
         ['the,exclamation!point', [
+            SplitName('th', 'e,exclamation!point'),
             SplitName('the,', 'exclamation!point'),
             SplitName('the,excl', 'amation!point'),
             SplitName('the,exclam', 'ation!point'),
             SplitName('the,exclamat', 'ion!point'),
             SplitName('the,exclamation!p', 'oint')
+        ]],
+        ['notice the middle word', [
+            SplitName('n', 'otice the middle word'),
+            SplitName('not', 'ice the middle word'),
+            SplitName('notice th', 'e middle word'),
+            SplitName('notice the m', 'iddle word'),
+            SplitName('notice the middle w', 'ord')
         ]]
     ])
     def test_parse_name(self, name, split_names):
