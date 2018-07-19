@@ -25,6 +25,9 @@ class SplitName:
 
 # --Helper functions and stuff-- #
 
+def index_is_in_range(index, word):
+    return index in range(len(word))
+
 def letter_is_consonant(name, index):
     letter = name[index].lower()
     next_letter = name[index + 1].lower()
@@ -35,7 +38,7 @@ def letter_is_vowel(name, index):
     letter = name[index].lower()
 
     return (letter in vowels or 
-        (letter == 'y' and ((index + 1) not in range(len(name)) or name[index + 1].lower() in consonants or name[index + 1].lower() == 'y')))
+        (letter == 'y' and ((not index_is_in_range(index + 1, name) or letter_is_unknown(name, index + 1)) or name[index + 1].lower() in consonants or name[index + 1].lower() == 'y')))
 
 def letter_is_unknown(name, index):
     letter = name[index].lower()
@@ -54,7 +57,14 @@ def number_of_vowels(name):
 def second_letter_is_silent_e(name, index):
     letter = name[index + 1]
 
-    return (index + 1 == len(name) - 1 or letter_is_unknown(name, index + 2)) and letter.lower() == 'e' and name[index].lower() != 'y' and number_of_vowels(name[:(index + 2)]) > 1
+    return (index + 1 == len(name) - 1 or letter_is_unknown(name, index + 2)) and letter.lower() == 'e' and name[index].lower() != 'y' and number_of_vowels(name[start_of_word(name, index):(index + 2)]) > 1
+
+def start_of_word(name, index):
+    start_index = index
+    while start_index > 0 and not letter_is_unknown(name, start_index):
+        start_index -= 1
+
+    return start_index
 
 def can_split(name, index):
     first_letter = name[index]
@@ -63,7 +73,7 @@ def can_split(name, index):
     return ((letter_is_consonant(name, index) or letter_is_unknown(name, index)) and 
         letter_is_vowel(name, index + 1) and 
         not second_letter_is_silent_e(name, index) and
-        not ((index + 2) in range(len(name)) and first_letter.lower() == 'q' and second_letter.lower() == 'u' and letter_is_vowel(name, index + 2)) or
+        not (index_is_in_range(index + 2, name) and first_letter.lower() == 'q' and second_letter.lower() == 'u' and letter_is_vowel(name, index + 2)) or
         (first_letter.lower() == 'u' and name[index - 1].lower() == 'q' and letter_is_vowel(name, index + 1)))
 
 # --Main functions-- #

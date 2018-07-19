@@ -2,6 +2,14 @@ import unittest, pair_names
 from parameterized import parameterized
 from pair_names import SplitName
 
+def parse_and_print(name):
+    result = pair_names.parse_name(name)
+
+    for x in result:
+        print(x.first_part, x.second_part)
+
+    return result
+
 class TestParseName(unittest.TestCase):
 
     @parameterized.expand([
@@ -73,6 +81,7 @@ class TestParseName(unittest.TestCase):
         ]],
         ['qu', [SplitName('q', 'u')]],
         ['qy', [SplitName('q', 'y')]],
+        ['uq', [SplitName('', 'uq')]],
 
         # Words that start with a vowel should be parsed before the word starts.
         ['ypsilanti', [
@@ -115,6 +124,23 @@ class TestParseName(unittest.TestCase):
             SplitName('notice th', 'e middle word'),
             SplitName('notice the m', 'iddle word'),
             SplitName('notice the middle w', 'ord')
+        ]],
+        ['qu eqy tae', [
+            SplitName('q', 'u eqy tae'),
+            SplitName('qu ', 'eqy tae'),
+            SplitName('qu eq', 'y tae'),
+            SplitName('qu eqy t', 'ae')
+        ]],
+        [' e ', [SplitName(' ', 'e ')]],
+        ['the thee me ate greate hate query', [
+            SplitName('th', 'e thee me ate greate hate query'),
+            SplitName('the th', 'ee me ate greate hate query'),
+            SplitName('the thee m', 'e ate greate hate query'),
+            SplitName('the thee me ', 'ate greate hate query'),
+            SplitName('the thee me ate gr', 'eate hate query'),
+            SplitName('the thee me ate greate h', 'ate query'),
+            SplitName('the thee me ate greate hate qu', 'ery'),
+            SplitName('the thee me ate greate hate quer', 'y'),
         ]]
     ])
     def test_parse_name(self, name, split_names):
