@@ -29,25 +29,21 @@ def index_is_in_range(index, word):
     return index in range(len(word))
 
 def letter_is_consonant(name, index):
-    letter = name[index].lower()
-    next_letter = name[index + 1].lower()
-
-    return letter in consonants or (letter == 'y' and next_letter in vowels)
+    return (name[index] in consonants or 
+        (name[index] == 'y' and name[index + 1] in vowels))
 
 def letter_is_vowel(name, index):
-    letter = name[index].lower()
-
-    return (letter in vowels or 
-        (letter == 'y' and ((not index_is_in_range(index + 1, name) or letter_is_unknown(name, index + 1)) or name[index + 1].lower() in consonants or name[index + 1].lower() == 'y')))
+    return (name[index] in vowels or 
+        (name[index] == 'y' and 
+            (not index_is_in_range(index + 1, name) or 
+            letter_is_unknown(name, index + 1) or 
+            name[index + 1] in (consonants + 'y'))))
 
 def letter_is_unknown(name, index):
-    letter = name[index].lower()
-
-    return letter not in consonants and letter not in vowels and letter != 'y'
+    return name[index] not in (consonants + vowels + 'y')
 
 def number_of_vowels(name):
     total = 0
-    name = name.lower()
 
     for vowel in (vowels + 'y'):
         total += name.count(vowel)
@@ -55,9 +51,10 @@ def number_of_vowels(name):
     return total
 
 def second_letter_is_silent_e(name, index):
-    letter = name[index + 1]
-
-    return (index + 1 == len(name) - 1 or letter_is_unknown(name, index + 2)) and letter.lower() == 'e' and name[index].lower() != 'y' and number_of_vowels(name[start_of_word(name, index):(index + 2)]) > 1
+    return ((index + 1 == len(name) - 1 or letter_is_unknown(name, index + 2)) and 
+        name[index + 1] == 'e' and 
+        name[index] != 'y' and 
+        number_of_vowels(name[start_of_word(name, index):(index + 2)]) > 1)
 
 def start_of_word(name, index):
     start_index = index
@@ -67,14 +64,13 @@ def start_of_word(name, index):
     return start_index
 
 def can_split(name, index):
-    first_letter = name[index]
-    second_letter = name[index + 1]
+    name = name.lower()
 
     return ((letter_is_consonant(name, index) or letter_is_unknown(name, index)) and 
         letter_is_vowel(name, index + 1) and 
         not second_letter_is_silent_e(name, index) and
-        not (index_is_in_range(index + 2, name) and first_letter.lower() == 'q' and second_letter.lower() == 'u' and letter_is_vowel(name, index + 2)) or
-        (first_letter.lower() == 'u' and name[index - 1].lower() == 'q' and letter_is_vowel(name, index + 1)))
+        not (index_is_in_range(index + 2, name) and name[index] == 'q' and name[index + 1] == 'u' and letter_is_vowel(name, index + 2)) or
+        (name[index] == 'u' and name[index - 1] == 'q' and letter_is_vowel(name, index + 1)))
 
 # --Main functions-- #
 

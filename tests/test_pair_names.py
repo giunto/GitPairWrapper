@@ -54,6 +54,10 @@ class TestParseName(unittest.TestCase):
             SplitName('queny', 'a')
         ]],
         ['FLYYY', [SplitName('FL', 'YYY')]],
+        ['aya', [
+            SplitName('', 'aya'), 
+            SplitName('ay', 'a')
+        ]],
 
         # The letter combination qu should be treated as a consonant if
         # a vowel directly follows.
