@@ -69,8 +69,13 @@ def can_split(name, index):
     return ((letter_is_consonant(name, index) or letter_is_unknown(name, index)) and 
         letter_is_vowel(name, index + 1) and 
         not second_letter_is_silent_e(name, index) and
-        not (index_is_in_range(index + 2, name) and name[index] == 'q' and name[index + 1] == 'u' and letter_is_vowel(name, index + 2)) or
-        (name[index] == 'u' and name[index - 1] == 'q' and letter_is_vowel(name, index + 1)))
+        not (index_is_in_range(index + 2, name) and 
+            name[index] == 'q' and 
+            name[index + 1] == 'u' and 
+            letter_is_vowel(name, index + 2)) or
+        (name[index] == 'u' and 
+            name[index - 1] == 'q' and 
+            letter_is_vowel(name, index + 1)))
 
 # --Main functions-- #
 
@@ -89,6 +94,17 @@ def parse_name(name):
             results.append(SplitName(name[:(i + 1)], name[(i + 1):]))
 
     return results
+
+def get_name_combinations(first_names, second_names):
+    combinations = []
+
+    for first_name in first_names:
+        for second_name in second_names:
+            combinations.append(first_name.first_part + second_name.second_part)
+            if second_name.first_part + first_name.second_part not in combinations:
+                combinations.append(second_name.first_part + first_name.second_part)
+
+    return combinations
 
 def main():
     arguments = sys.argv[1:]

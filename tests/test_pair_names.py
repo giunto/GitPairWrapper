@@ -158,5 +158,41 @@ class TestParseName(unittest.TestCase):
             self.assertEqual(result[i].first_part, split_names[i].first_part)
             self.assertEqual(result[i].second_part, split_names[i].second_part)
 
+class TestGetNameCombinations(unittest.TestCase):
+
+    @parameterized.expand([
+        # Basic test cases
+        [[SplitName('fr', 'y')], [SplitName('l', 'eela')], ['freela', 'ly']],
+        [[SplitName('b', 'ob')], [SplitName('r', 'oss')], ['boss', 'rob']],
+        [
+            [SplitName('b', 'enjamin'), SplitName('benj', 'amin')],
+            [SplitName('m', 'atthew'), SplitName('matth', 'ew')],
+            [
+                'batthew', 
+                'menjamin', 
+                'bew', 
+                'matthenjamin', 
+                'benjatthew', 
+                'mamin', 
+                'benjew', 
+                'matthamin'
+            ]
+        ],
+        [[SplitName('st', 'ar')], [SplitName('st', 'ar')], ['star']],
+        [
+            [SplitName('e', 'clipse'), SplitName('ecl', 'ipse')],
+            [SplitName('e', 'clipse'), SplitName('ecl', 'ipse')],
+            ['eclipse']
+        ]
+    ])
+    def test_get_name_combinations(self, first_name, second_name, combinations):
+        result = pair_names.get_name_combinations(first_name, second_name)
+
+        print(result)
+
+        self.assertEqual(len(result), len(combinations))
+        for i in range(len(result)):
+            self.assertEqual(result[i], combinations[i])
+
 if __name__ == '__main__':
     unittest.main()
