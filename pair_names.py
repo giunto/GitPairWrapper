@@ -123,14 +123,14 @@ def get_name_combinations(first_names, second_names):
             if first_combination.get_name() not in combinations and first_combination.first_part != '':
                 if is_valid_combination(first_combination):
                     combinations.append(first_combination.get_name())
-                else:
+                elif first_combination.get_name() not in bad_combinations:
                     bad_combinations.append(first_combination.get_name())
 
             second_combination = CombinedName(second_name.first_part, first_name.second_part)
             if second_combination.get_name() not in combinations and second_combination.first_part != '':
                 if is_valid_combination(second_combination):
                     combinations.append(second_combination.get_name())
-                else:
+                elif second_combination.get_name() not in bad_combinations:
                     bad_combinations.append(second_combination.get_name())
 
     if combinations == []:

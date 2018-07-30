@@ -234,6 +234,16 @@ class TestGetNameCombinations(unittest.TestCase):
             [SplitName('', 'ural owl')],
             ['quural owl']
         ],
+        [
+            [SplitName('qu', 'ail')],
+            [SplitName('', 'ural owl'), SplitName('', 'ural owl')],
+            ['quural owl']
+        ],
+        [
+            [SplitName('', 'ural owl'), SplitName('', 'ural owl')],
+            [SplitName('qu', 'ail')],
+            ['quural owl']
+        ]
 
     ])
     def test_get_name_combinations(self, first_name, second_name, combinations):
@@ -241,7 +251,7 @@ class TestGetNameCombinations(unittest.TestCase):
 
         print(result)
 
-        self.assertCountEqual(result, combinations)
+        self.assertEqual(len(result), len(combinations))
         for name in result:
             self.assertIn(name, result)
 
