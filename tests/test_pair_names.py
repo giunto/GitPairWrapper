@@ -178,21 +178,72 @@ class TestGetNameCombinations(unittest.TestCase):
                 'matthamin'
             ]
         ],
+        [
+            [SplitName('qu', 'igley')],
+            [SplitName('sm', 'ith')],
+            ['quith', 'smigley']
+        ],
+
+        # Duplicates should not be added.
         [[SplitName('st', 'ar')], [SplitName('st', 'ar')], ['star']],
         [
-            [SplitName('e', 'clipse'), SplitName('ecl', 'ipse')],
-            [SplitName('e', 'clipse'), SplitName('ecl', 'ipse')],
-            ['eclipse']
-        ]
+            [SplitName('s', 'amename'), SplitName('sam', 'ename'), SplitName('samen', 'ame')],
+            [SplitName('s', 'amename'), SplitName('sam', 'ename'), SplitName('samen', 'ame')],
+            [
+                'samename',
+                'sename',
+                'samamename',
+                'same',
+                'samenamename',
+                'samame',
+                'samenename'
+            ]
+        ],
+
+        # A word combination shouldn't be added if the first part is an empty string.
+        [
+            [SplitName('', 'eclipse'), SplitName('ecl', 'ipse')],
+            [SplitName('', 'autumn'), SplitName('aut', 'umn')],
+            ['eclautumn', 'auteclipse', 'eclumn', 'autipse']
+        ],
+
+        # Parts that connect on the same letter shouldn't be added, unless there
+        # are no other combinations.
+        [
+            [SplitName('qu', 'ail')],
+            [SplitName('v', 'ulture'), SplitName('vult', 'ure')],
+            ['vail', 'vultail']
+        ],
+        [
+            [SplitName('QU', 'AIL')],
+            [SplitName('V', 'ULTURE'), SplitName('VULT', 'URE')],
+            ['VAIL', 'VULTAIL']
+        ],
+        [
+            [SplitName('ea', 'gle')],
+            [SplitName('seag', 'ull')],
+            ['eaull']
+        ],
+        [
+            [SplitName('', 'ural owl')],
+            [SplitName('qu', 'ail')],
+            ['quural owl']
+        ],
+        [
+            [SplitName('qu', 'ail')],
+            [SplitName('', 'ural owl')],
+            ['quural owl']
+        ],
+
     ])
     def test_get_name_combinations(self, first_name, second_name, combinations):
         result = pair_names.get_name_combinations(first_name, second_name)
 
         print(result)
 
-        self.assertEqual(len(result), len(combinations))
-        for i in range(len(result)):
-            self.assertEqual(result[i], combinations[i])
+        self.assertCountEqual(result, combinations)
+        for name in result:
+            self.assertIn(name, result)
 
 if __name__ == '__main__':
     unittest.main()

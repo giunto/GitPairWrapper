@@ -22,6 +22,17 @@ class SplitName:
         self.first_part = first_part
         self.second_part = second_part
 
+class CombinedName:
+    first_part = str()
+    second_part = str()
+
+    def __init__(self, first_part, second_part):
+        self.first_part = first_part
+        self.second_part = second_part
+
+    def get_name(self):
+        return self.first_part + self.second_part
+
 
 # --Helper functions and stuff-- #
 
@@ -77,6 +88,12 @@ def can_split(name, index):
             name[index - 1] == 'q' and 
             letter_is_vowel(name, index + 1)))
 
+def is_valid_combination(combination):
+    last_letter_of_first_part = combination.first_part[len(combination.first_part) - 1].lower()
+    first_letter_of_second_part = combination.second_part[0].lower()
+
+    return last_letter_of_first_part != first_letter_of_second_part
+
 # --Main functions-- #
 
 def parse_name(name):
@@ -97,13 +114,27 @@ def parse_name(name):
 
 def get_name_combinations(first_names, second_names):
     combinations = []
+    bad_combinations = []
 
     for first_name in first_names:
         for second_name in second_names:
-            combinations.append(first_name.first_part + second_name.second_part)
-            if second_name.first_part + first_name.second_part not in combinations:
-                combinations.append(second_name.first_part + first_name.second_part)
+            first_combination = CombinedName(first_name.first_part, second_name.second_part)
 
+            if first_combination.get_name() not in combinations and first_combination.first_part != '':
+                if is_valid_combination(first_combination):
+                    combinations.append(first_combination.get_name())
+                else:
+                    bad_combinations.append(first_combination.get_name())
+
+            second_combination = CombinedName(second_name.first_part, first_name.second_part)
+            if second_combination.get_name() not in combinations and second_combination.first_part != '':
+                if is_valid_combination(second_combination):
+                    combinations.append(second_combination.get_name())
+                else:
+                    bad_combinations.append(second_combination.get_name())
+
+    if combinations == []:
+        return bad_combinations
     return combinations
 
 def main():
