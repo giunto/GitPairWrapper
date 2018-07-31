@@ -22,6 +22,29 @@ class SplitName:
         self.first_part = first_part
         self.second_part = second_part
 
+class CombinationHandler:
+    valid_combinations = []
+    invalid_combinations = []
+
+    def __init__(self):
+        self.valid_combinations = []
+        self.invalid_combinations = []
+
+    def filter_and_add(self, combination):
+        if (combination.get_name() not in self.valid_combinations and 
+            combination.first_part != '' and 
+            combination.second_part != ''):
+            
+            if is_valid_combination(combination):
+                self.valid_combinations.append(combination.get_name())
+            elif combination.get_name() not in self.invalid_combinations:
+                self.invalid_combinations.append(combination.get_name())
+
+    def get_combinations(self):
+        if self.valid_combinations == []:
+            return self.invalid_combinations
+        return self.valid_combinations
+
 class CombinedName:
     first_part = str()
     second_part = str()
@@ -113,29 +136,14 @@ def parse_name(name):
     return results
 
 def get_name_combinations(first_names, second_names):
-    combinations = []
-    bad_combinations = []
+    combinations = CombinationHandler()
 
     for first_name in first_names:
         for second_name in second_names:
-            first_combination = CombinedName(first_name.first_part, second_name.second_part)
+            combinations.filter_and_add(CombinedName(first_name.first_part, second_name.second_part))
+            combinations.filter_and_add(CombinedName(second_name.first_part, first_name.second_part))
 
-            if first_combination.get_name() not in combinations and first_combination.first_part != '':
-                if is_valid_combination(first_combination):
-                    combinations.append(first_combination.get_name())
-                elif first_combination.get_name() not in bad_combinations:
-                    bad_combinations.append(first_combination.get_name())
-
-            second_combination = CombinedName(second_name.first_part, first_name.second_part)
-            if second_combination.get_name() not in combinations and second_combination.first_part != '':
-                if is_valid_combination(second_combination):
-                    combinations.append(second_combination.get_name())
-                elif second_combination.get_name() not in bad_combinations:
-                    bad_combinations.append(second_combination.get_name())
-
-    if combinations == []:
-        return bad_combinations
-    return combinations
+    return combinations.get_combinations()
 
 def main():
     arguments = sys.argv[1:]

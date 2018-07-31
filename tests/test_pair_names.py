@@ -200,11 +200,21 @@ class TestGetNameCombinations(unittest.TestCase):
             ]
         ],
 
-        # A word combination shouldn't be added if the first part is an empty string.
+        # A word combination shouldn't be added if the first part or second part is an empty string.
         [
             [SplitName('', 'eclipse'), SplitName('ecl', 'ipse')],
             [SplitName('', 'autumn'), SplitName('aut', 'umn')],
             ['eclautumn', 'auteclipse', 'eclumn', 'autipse']
+        ],
+        [
+            [SplitName('spr', 'ing'), SplitName('spring', '')],
+            [SplitName('w', 'inter'), SplitName('winter', '')],
+            ['sprinter', 'wing', 'wintering', 'springinter']
+        ],
+        [
+            [SplitName('', '')],
+            [SplitName('', '')],
+            []
         ],
 
         # Parts that connect on the same letter shouldn't be added, unless there
