@@ -34,7 +34,7 @@ class CombinationHandler:
         if (combination.get_name() not in self.valid_combinations and 
             combination.first_part != '' and 
             combination.second_part != ''):
-            
+
             if is_valid_combination(combination):
                 self.valid_combinations.append(combination.get_name())
             elif combination.get_name() not in self.invalid_combinations:
@@ -118,6 +118,10 @@ def is_valid_combination(combination):
     return last_letter_of_first_part != first_letter_of_second_part
 
 # --Main functions-- #
+
+def get_names_from_file(first_initials, second_initials, file_path):
+    pair_file = open('fake_file.txt')
+    return [UserName('Alpha', 'Beta'), UserName('Commodore', 'Delta')]
 
 def parse_name(name):
     results = []

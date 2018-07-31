@@ -1,6 +1,7 @@
 import unittest, pair_names
 from parameterized import parameterized
-from pair_names import SplitName
+from mock import patch, mock_open
+from pair_names import SplitName, UserName
 
 def parse_and_print(name):
     result = pair_names.parse_name(name)
@@ -9,6 +10,23 @@ def parse_and_print(name):
         print(x.first_part, x.second_part)
 
     return result
+
+class TestGetNamesFromFile(unittest.TestCase):
+
+    @parameterized.expand([
+        ['ab', 'cd', 'fake_file.txt', 'pairs:\n  ab: Alpha Beta; alphabeta\n  cd: Commodore Delta; commodoredelta\n', [UserName('Alpha', 'Beta'), UserName('Commodore', 'Delta')]]
+    ])
+    def test_get_names_from_file(self, first_initial, second_initial, file_path, file_contents, names):
+        with patch('__builtin__.open', mock_open(read_data=file_contents)) as open_mock:
+            result = pair_names.get_names_from_file(first_initial, second_initial, file_path)
+
+            open_mock.assert_called_once_with(file_path)
+
+            self.assertEqual(len(result), 2)
+            self.assertEqual(result[0].first_name, names[0].first_name)
+            self.assertEqual(result[0].last_name, names[0].last_name)
+            self.assertEqual(result[1].first_name, names[1].first_name)
+            self.assertEqual(result[1].last_name, names[1].last_name)
 
 class TestParseName(unittest.TestCase):
 
