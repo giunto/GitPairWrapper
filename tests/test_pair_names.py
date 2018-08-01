@@ -11,16 +11,48 @@ def parse_and_print(name):
 
     return result
 
+def make_fake_file(*args):
+    fake_file = str()
+
+    for line in args:
+        fake_file.join(line + '\n')
+
+    return fake_file
+
+
 class TestGetNamesFromFile(unittest.TestCase):
 
     @parameterized.expand([
-        ['ab', 'cd', 'fake_file.txt', 'pairs:\n  ab: Alpha Beta; alphabeta\n  cd: Commodore Delta; commodoredelta\n', [UserName('Alpha', 'Beta'), UserName('Commodore', 'Delta')]]
+        [
+            'ab', 
+            'cd', 
+            make_fake_file(
+                'pair:',
+                '  ab: Alpha Beta; alphabeta',
+                '  cd: Commodore Delta; commodoredelta'
+            ), 
+            [
+                UserName('Alpha', 'Beta'), 
+                UserName('Commodore', 'Delta')
+            ]
+        ],
+        [
+            'ms', 
+            'sm', 
+            make_fake_file(
+                'pair:',
+                '  ms: Monty Shallow; montyshallow',
+                '  sm: Suzan Magitt; suzanmagitt'
+            ), 
+            [
+                UserName('Monty', 'Shallow'), 
+                UserName('Suzan', 'Magitt')
+            ]
+        ],
     ])
-    def test_get_names_from_file(self, first_initial, second_initial, file_path, file_contents, names):
+    def test_get_names_from_file(self, first_initial, second_initial, file_contents, names):
         with patch('__builtin__.open', mock_open(read_data=file_contents)) as open_mock:
-            result = pair_names.get_names_from_file(first_initial, second_initial, file_path)
-
-            open_mock.assert_called_once_with(file_path)
+            result = pair_names.get_names_from_file(first_initial, second_initial, 'fake_file.txt')
 
             self.assertEqual(len(result), 2)
             self.assertEqual(result[0].first_name, names[0].first_name)
