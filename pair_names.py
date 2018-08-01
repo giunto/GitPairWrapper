@@ -1,4 +1,4 @@
-import sys
+import sys, re
 
 # --Global variables-- #
 consonants = 'bcdfghjklmnpqrstvwxz'
@@ -121,7 +121,20 @@ def is_valid_combination(combination):
 
 def get_names_from_file(first_initials, second_initials, file_path):
     pair_file = open('fake_file.txt')
-    return [UserName('Alpha', 'Beta'), UserName('Commodore', 'Delta')]
+
+    first_name = UserName('', '')
+    second_name = UserName('', '')
+    for line in pair_file:
+        if line[2:4] == first_initials:
+            first_name_match = re.search(r'(\w+) (\w+)', line)
+            first_name.first_name = first_name_match.group(1)
+            first_name.last_name = first_name_match.group(2)
+        if line[2:4] == second_initials:
+            second_name_match = re.search(r'(\w+) (\w+)', line)
+            second_name.first_name = first_name_match.group(1)
+            second_name.last_name = first_name_match.group(2)
+
+    return [first_name, second_name]
 
 def parse_name(name):
     results = []

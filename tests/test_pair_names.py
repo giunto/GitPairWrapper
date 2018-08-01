@@ -12,10 +12,10 @@ def parse_and_print(name):
     return result
 
 def make_fake_file(*args):
-    fake_file = str()
+    fake_file = ''
 
     for line in args:
-        fake_file.join(line + '\n')
+        fake_file += line + '\n'
 
     return fake_file
 
@@ -23,6 +23,8 @@ def make_fake_file(*args):
 class TestGetNamesFromFile(unittest.TestCase):
 
     @parameterized.expand([
+
+        # Basic test cases
         [
             'ab', 
             'cd', 
@@ -49,6 +51,23 @@ class TestGetNamesFromFile(unittest.TestCase):
                 UserName('Suzan', 'Magitt')
             ]
         ],
+
+        # Names should be indexed by the initials.
+        [
+            'ml', 
+            'mb', 
+            make_fake_file(
+                'pair:',
+                '  ms: Mariel Sthilaire; msthilarie'
+                '  ml: Michel Lola; mlola',
+                '  mb: Maximo Baribeau; mbaribeau'
+            ), 
+            [
+                UserName('Michel', 'Lola'), 
+                UserName('Maximo', 'Baribeau')
+            ]
+        ],
+
     ])
     def test_get_names_from_file(self, first_initial, second_initial, file_contents, names):
         with patch('__builtin__.open', mock_open(read_data=file_contents)) as open_mock:
