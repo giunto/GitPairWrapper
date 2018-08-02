@@ -122,17 +122,17 @@ def is_valid_combination(combination):
 def get_names_from_file(first_initials, second_initials, file_path):
     pair_file = open('fake_file.txt')
 
+    pattern = re.compile(r'  (\w\w): (\w+) (\w+)')
+
     first_name = UserName('', '')
     second_name = UserName('', '')
-    for line in pair_file:
-        if line[2:4] == first_initials:
-            first_name_match = re.search(r'(\w+) (\w+)', line)
-            first_name.first_name = first_name_match.group(1)
-            first_name.last_name = first_name_match.group(2)
-        if line[2:4] == second_initials:
-            second_name_match = re.search(r'(\w+) (\w+)', line)
-            second_name.first_name = first_name_match.group(1)
-            second_name.last_name = first_name_match.group(2)
+    for line in pair_file.readlines():
+        match = pattern.match(line)
+        if match != None:
+            if match.group(1) == first_initials:
+                first_name = UserName(match.group(2), match.group(3))
+            if match.group(1) == second_initials:
+                second_name = UserName(match.group(2), match.group(3))
 
     return [first_name, second_name]
 

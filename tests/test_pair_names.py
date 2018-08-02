@@ -58,13 +58,68 @@ class TestGetNamesFromFile(unittest.TestCase):
             'mb', 
             make_fake_file(
                 'pair:',
-                '  ms: Mariel Sthilaire; msthilarie'
+                '  ms: Mariel Sthilaire; msthilarie',
                 '  ml: Michel Lola; mlola',
                 '  mb: Maximo Baribeau; mbaribeau'
             ), 
             [
                 UserName('Michel', 'Lola'), 
                 UserName('Maximo', 'Baribeau')
+            ]
+        ],
+                [
+            'kb', 
+            'lf', 
+            make_fake_file(
+                'pair:',
+                '  kb: Klara Bartos; kbartos',
+                '  rh: Royce Hanstine; rhanstine',
+                '  lf: Lanny Fiore; lfiore'
+            ), 
+            [
+                UserName('Klara', 'Bartos'), 
+                UserName('Lanny', 'Fiore')
+            ]
+        ],
+        [
+            'yr', 
+            'mn', 
+            make_fake_file(
+                'pair:',
+                '  mn: Mikel Niederhaus; mniederhaus',
+                '  yr: Yadira Reddell; yreddell'
+            ), 
+            [
+                UserName('Yadira', 'Reddell'), 
+                UserName('Mikel', 'Niederhaus')
+            ]
+        ],
+                [
+            'sk', 
+            'bz', 
+            make_fake_file(
+                'pair:',
+                '  ad: Alane Durig; adurig',
+                '  bz: Berry Zuno; bzuno',
+                '  sk: Shaquita Kenagy; skenagy'
+            ), 
+            [
+                UserName('Shaquita', 'Kenagy'), 
+                UserName('Berry', 'Zuno')
+            ]
+        ],
+        [
+            'gl', 
+            'av', 
+            make_fake_file(
+                'pair:',
+                '  av: Alonzo Vandyk; avandyk',
+                '  jc: Josh Caparoula; jcaparoula',
+                '  gl: Gustavo Laneve; glaneve'
+            ), 
+            [
+                UserName('Gustavo', 'Laneve'), 
+                UserName('Alonzo', 'Vandyk')
             ]
         ],
 
@@ -74,6 +129,7 @@ class TestGetNamesFromFile(unittest.TestCase):
             result = pair_names.get_names_from_file(first_initial, second_initial, 'fake_file.txt')
 
             self.assertEqual(len(result), 2)
+            print(result[0].first_name, result[0].last_name, result[1].first_name, result[1].last_name)
             self.assertEqual(result[0].first_name, names[0].first_name)
             self.assertEqual(result[0].last_name, names[0].last_name)
             self.assertEqual(result[1].first_name, names[1].first_name)
