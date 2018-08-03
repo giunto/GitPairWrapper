@@ -123,6 +123,106 @@ class TestGetNamesFromFile(unittest.TestCase):
             ]
         ],
 
+        # If a name doesn't exist, return an empty UserName object.
+        [
+            'ml', 
+            'jn', 
+            make_fake_file(
+                'pair:',
+                '  jm: Jae Miners; jminers',
+                '  ml: Malcolm Locks; mlocks'
+            ), 
+            [
+                UserName('Malcolm', 'Locks'), 
+                UserName('', '')
+            ]
+        ],
+        [
+            'gs', 
+            'dh', 
+            make_fake_file(
+                'pair:',
+                '  em: Elisha McCauley; mccauley',
+                '  sm: Saul Mounger; soulmongerer'
+            ), 
+            [
+                UserName('', ''), 
+                UserName('', '')
+            ]
+        ],
+        [
+            'st', 
+            'ib', 
+            make_fake_file(
+                'pair:',
+                '  ib: Ilona Bute; ibute',
+                '  ss: Sherry Sokoloski; ssokoloski'
+            ), 
+            [
+                UserName('', ''), 
+                UserName('Ilona', 'Bute')
+            ]
+        ],
+
+        # Different lengths of initials should be handled.
+        [
+            'c', 
+            'a', 
+            make_fake_file(
+                'pair:',
+                '  a: Apple Anderson; apple',
+                '  c: Carrot Cianciolo; carrot'
+            ), 
+            [
+                UserName('Carrot', 'Cianciolo'), 
+                UserName('Apple', 'Anderson')
+            ]
+        ],
+        [
+            'abc',
+            'xyz',
+            make_fake_file(
+                'pair:',
+                '  xyz: Xavier Zamenhof',
+                '  abc: The Alphabet'
+            ),
+            [
+                UserName('The', 'Alphabet'),
+                UserName('Xavier', 'Zamenhof')
+            ]
+        ],
+
+        # If there is no last name, then the last name should be an empty string.
+        [
+            'tom',
+            'na',
+            make_fake_file(
+                'pair:',
+                '  tom: Tom; tom',
+                '  na: Nobody; nobody'
+            ),
+            [
+                UserName('Tom', ''),
+                UserName('Nobody', '')
+            ]
+        ],
+
+        # If there are multiple names/letters after the first name, those should be
+        # treated as a last name.
+        [
+            'hm',
+            'sb',
+            make_fake_file(
+                'pair:',
+                '  hm: Hank B. McHillington',
+                '  sb: Sally Van Der Bork'
+            ),
+            [
+                UserName('Hank', 'B. McHillington'),
+                UserName('Sally', 'Van Der Bork')
+            ]
+        ]
+
     ])
     def test_get_names_from_file(self, first_initial, second_initial, file_contents, names):
         with patch('__builtin__.open', mock_open(read_data=file_contents)) as open_mock:
