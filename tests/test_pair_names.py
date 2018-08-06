@@ -33,10 +33,10 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  ab: Alpha Beta; alphabeta',
                 '  cd: Commodore Delta; commodoredelta'
             ), 
-            [
-                UserName('Alpha', 'Beta'), 
-                UserName('Commodore', 'Delta')
-            ]
+            {
+                'first_name': UserName('Alpha', 'Beta'), 
+                'second_name': UserName('Commodore', 'Delta')
+            }
         ],
         [
             'ms', 
@@ -46,10 +46,23 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  ms: Monty Shallow; montyshallow',
                 '  sm: Suzan Magitt; suzanmagitt'
             ), 
-            [
-                UserName('Monty', 'Shallow'), 
-                UserName('Suzan', 'Magitt')
-            ]
+            {
+                'first_name': UserName('Monty', 'Shallow'), 
+                'second_name': UserName('Suzan', 'Magitt')
+            }
+        ],
+        [
+            'ak', 
+            'mh', 
+            make_fake_file(
+                'pair:',
+                '  ak: Angle Knickerbocker',
+                '  mh: Maximina Hardinson'
+            ), 
+            {
+                'first_name': UserName('Angle', 'Knickerbocker'), 
+                'second_name': UserName('Maximina', 'Hardinson')
+            }
         ],
 
         # Names should be indexed by the initials.
@@ -62,10 +75,10 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  ml: Michel Lola; mlola',
                 '  mb: Maximo Baribeau; mbaribeau'
             ), 
-            [
-                UserName('Michel', 'Lola'), 
-                UserName('Maximo', 'Baribeau')
-            ]
+            {
+                'first_name': UserName('Michel', 'Lola'), 
+                'second_name': UserName('Maximo', 'Baribeau')
+            }
         ],
                 [
             'kb', 
@@ -76,10 +89,10 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  rh: Royce Hanstine; rhanstine',
                 '  lf: Lanny Fiore; lfiore'
             ), 
-            [
-                UserName('Klara', 'Bartos'), 
-                UserName('Lanny', 'Fiore')
-            ]
+            {
+                'first_name': UserName('Klara', 'Bartos'), 
+                'second_name': UserName('Lanny', 'Fiore')
+            }
         ],
         [
             'yr', 
@@ -89,12 +102,12 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  mn: Mikel Niederhaus; mniederhaus',
                 '  yr: Yadira Reddell; yreddell'
             ), 
-            [
-                UserName('Yadira', 'Reddell'), 
-                UserName('Mikel', 'Niederhaus')
-            ]
+            {
+                'first_name': UserName('Yadira', 'Reddell'),
+                'second_name': UserName('Mikel', 'Niederhaus')
+            }
         ],
-                [
+        [
             'sk', 
             'bz', 
             make_fake_file(
@@ -103,10 +116,10 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  bz: Berry Zuno; bzuno',
                 '  sk: Shaquita Kenagy; skenagy'
             ), 
-            [
-                UserName('Shaquita', 'Kenagy'), 
-                UserName('Berry', 'Zuno')
-            ]
+            {
+                'first_name': UserName('Shaquita', 'Kenagy'),
+                'second_name': UserName('Berry', 'Zuno')
+            }
         ],
         [
             'gl', 
@@ -117,52 +130,12 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  jc: Josh Caparoula; jcaparoula',
                 '  gl: Gustavo Laneve; glaneve'
             ), 
-            [
-                UserName('Gustavo', 'Laneve'), 
-                UserName('Alonzo', 'Vandyk')
-            ]
+            {
+                'first_name': UserName('Gustavo', 'Laneve'), 
+                'second_name': UserName('Alonzo', 'Vandyk')
+            }
         ],
 
-        # If a name doesn't exist, return an empty UserName object.
-        [
-            'ml', 
-            'jn', 
-            make_fake_file(
-                'pair:',
-                '  jm: Jae Miners; jminers',
-                '  ml: Malcolm Locks; mlocks'
-            ), 
-            [
-                UserName('Malcolm', 'Locks'), 
-                UserName('', '')
-            ]
-        ],
-        [
-            'gs', 
-            'dh', 
-            make_fake_file(
-                'pair:',
-                '  em: Elisha McCauley; mccauley',
-                '  sm: Saul Mounger; soulmongerer'
-            ), 
-            [
-                UserName('', ''), 
-                UserName('', '')
-            ]
-        ],
-        [
-            'st', 
-            'ib', 
-            make_fake_file(
-                'pair:',
-                '  ib: Ilona Bute; ibute',
-                '  ss: Sherry Sokoloski; ssokoloski'
-            ), 
-            [
-                UserName('', ''), 
-                UserName('Ilona', 'Bute')
-            ]
-        ],
 
         # Different lengths of initials should be handled.
         [
@@ -173,23 +146,23 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  a: Apple Anderson; apple',
                 '  c: Carrot Cianciolo; carrot'
             ), 
-            [
-                UserName('Carrot', 'Cianciolo'), 
-                UserName('Apple', 'Anderson')
-            ]
+            {
+                'first_name': UserName('Carrot', 'Cianciolo'), 
+                'second_name': UserName('Apple', 'Anderson')
+            }
         ],
         [
             'abc',
             'xyz',
             make_fake_file(
                 'pair:',
-                '  xyz: Xavier Zamenhof',
-                '  abc: The Alphabet'
+                '  xyz: Xavier Zamenhof; xzam',
+                '  abc: The Alphabet; abcdefghijklmnopqrstuvwxyz'
             ),
-            [
-                UserName('The', 'Alphabet'),
-                UserName('Xavier', 'Zamenhof')
-            ]
+            {
+                'first_name': UserName('The', 'Alphabet'),
+                'second_name': UserName('Xavier', 'Zamenhof')
+            }
         ],
 
         # If there is no last name, then the last name should be an empty string.
@@ -201,10 +174,10 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  tom: Tom; tom',
                 '  na: Nobody; nobody'
             ),
-            [
-                UserName('Tom', ''),
-                UserName('Nobody', '')
-            ]
+            {
+                'first_name': UserName('Tom', ''),
+                'second_name': UserName('Nobody', '')
+            }
         ],
 
         # If there are multiple names/letters after the first name, those should be
@@ -214,26 +187,107 @@ class TestGetNamesFromFile(unittest.TestCase):
             'sb',
             make_fake_file(
                 'pair:',
-                '  hm: Hank B. McHillington',
-                '  sb: Sally Van Der Bork'
+                '  hm: Hank B. McHillington; hankhill',
+                '  sb: Sally Van Der Bork; sbork'
             ),
-            [
-                UserName('Hank', 'B. McHillington'),
-                UserName('Sally', 'Van Der Bork')
-            ]
+            {
+                'first_name': UserName('Hank', 'B. McHillington'),
+                'second_name': UserName('Sally', 'Van Der Bork')
+            }
+        ],
+
+        # Different lengths of whitespace should be handled,
+        # but left alone if they are in the last name.
+        [
+            'fn',
+            'bc',
+            make_fake_file(
+                'pair:',
+                '    fn   :   Fiammetta   Nascimbeni   ; fnascimbeni',
+                'bc:Benito   Rodolfo   Catalano   '
+            ),
+            {
+                'first_name': UserName('Fiammetta', 'Nascimbeni'),
+                'second_name': UserName('Benito', 'Rodolfo   Catalano')
+            }
         ]
 
     ])
-    def test_get_names_from_file(self, first_initial, second_initial, file_contents, names):
-        with patch('__builtin__.open', mock_open(read_data=file_contents)) as open_mock:
-            result = pair_names.get_names_from_file(first_initial, second_initial, 'fake_file.txt')
+    def test_get_names_from_file(self, first_initials, second_initials, file_contents, names):
+        with patch('builtins.open', mock_open(read_data=file_contents)):
+            result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
-            self.assertEqual(len(result), 2)
-            print(result[0].first_name, result[0].last_name, result[1].first_name, result[1].last_name)
-            self.assertEqual(result[0].first_name, names[0].first_name)
-            self.assertEqual(result[0].last_name, names[0].last_name)
-            self.assertEqual(result[1].first_name, names[1].first_name)
-            self.assertEqual(result[1].last_name, names[1].last_name)
+            first_name = result['first_name']
+            second_name = result['second_name']
+
+            expected_first_name = names['first_name']
+            expected_second_name = names['second_name']
+
+            self.assertEqual(first_name.first_name, expected_first_name.first_name)
+            self.assertEqual(first_name.last_name, expected_first_name.last_name)
+            self.assertEqual(second_name.first_name, expected_second_name.first_name)
+            self.assertEqual(second_name.last_name, expected_second_name.last_name)
+
+    @parameterized.expand([
+        [
+            'st', 
+            'ib', 
+            make_fake_file(
+                'pair:',
+                '  ib: Ilona Bute; ibute',
+                '  ss: Sherry Sokoloski; ssokoloski'
+            ), 
+            UserName('Ilona', 'Bute')
+        ],
+    ])
+    def test_get_names_from_file_first_name_doesnt_exist(self, first_initials, second_initials, file_contents, expected_second_name):
+        with patch('builtins.open', mock_open(read_data=file_contents)):
+            result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
+
+            first_name = result['first_name']
+            second_name = result['second_name']
+
+            self.assertIsNone(first_name)
+            self.assertEqual(second_name.first_name, expected_second_name.first_name)
+            self.assertEqual(second_name.last_name, expected_second_name.last_name)
+
+    @parameterized.expand([
+        [
+            'ml', 
+            'jn', 
+            make_fake_file(
+                'pair:',
+                '  jm: Jae Miners; jminers',
+                '  ml: Malcolm Locks; mlocks'
+            ), 
+            UserName('Malcolm', 'Locks')
+        ],
+    ])
+    def test_get_names_from_file_second_name_doesnt_exist(self, first_initials, second_initials, file_contents, expected_first_name):
+        with patch('builtins.open', mock_open(read_data=file_contents)):
+            result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
+
+            first_name = result['first_name']
+            second_name = result['second_name']
+
+            self.assertEqual(first_name.first_name, expected_first_name.first_name)
+            self.assertEqual(first_name.last_name, expected_first_name.last_name)
+            self.assertIsNone(second_name)
+
+    def test_get_names_from_file_neither_name_exists(self):
+        file_contents = make_fake_file(
+            'pair:',
+            '  em: Elisha McCauley; mccauley',
+            '  sm: Saul Mounger; soulmongerer'
+        )
+
+        with patch('builtins.open', mock_open(read_data=file_contents)):
+            result = pair_names.get_names_from_file('gs', 'dh', 'fake_file.txt')
+
+            self.assertIsNone(result['first_name'])
+            self.assertIsNone(result['second_name'])
+
+
 
 class TestParseName(unittest.TestCase):
 

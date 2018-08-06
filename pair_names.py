@@ -59,6 +59,12 @@ class CombinedName:
 
 # --Helper functions and stuff-- #
 
+def create_user_name_from_matches(match):
+    names = match.group(2).split(' ', 1)
+    first_name = names[0]
+    last_name = names[1].strip() if len(names) > 1 else ''
+    return UserName(first_name, last_name)
+
 def index_is_in_range(index, word):
     return index in range(len(word))
 
@@ -122,22 +128,22 @@ def is_valid_combination(combination):
 def get_names_from_file(first_initials, second_initials, file_path):
     pair_file = open('fake_file.txt')
 
-    pattern = re.compile(r'  (\w+): (\w+)( (\w+))?')
+    pattern = re.compile(r'\s*(\w+)\s*:\s*([^;^\n]+)')
 
-    first_name = UserName('', '')
-    second_name = UserName('', '')
+    first_name = None
+    second_name = None
+    
     for line in pair_file.readlines():
-        match = pattern.match(line)
-        if match != None:
-            initials = match.group(1)
-            fn = match.group(2)
-            ln = match.group(4) if match.group(4) != None else ''
+        matches = pattern.match(line)
+        if matches != None:
+            initials = matches.group(1)
+            name = create_user_name_from_matches(matches)
             if initials == first_initials:
-                first_name = UserName(fn, ln)
+                first_name = name
             if initials == second_initials:
-                second_name = UserName(fn, ln)
+                second_name = name
 
-    return [first_name, second_name]
+    return {'first_name': first_name, 'second_name': second_name}
 
 def parse_name(name):
     results = []
