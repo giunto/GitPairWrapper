@@ -1,7 +1,7 @@
 import unittest, pair_names
 from parameterized import parameterized
 from mock import patch, mock_open
-from pair_names import SplitName, UserName
+from pair_names import TwoPartString
 
 def parse_and_print(name):
     result = pair_names.parse_name(name)
@@ -34,8 +34,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  cd: Commodore Delta; commodoredelta'
             ), 
             {
-                'first_name': UserName('Alpha', 'Beta'), 
-                'second_name': UserName('Commodore', 'Delta')
+                'first_name': TwoPartString('Alpha', 'Beta'), 
+                'second_name': TwoPartString('Commodore', 'Delta')
             }
         ],
         [
@@ -47,8 +47,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  sm: Suzan Magitt; suzanmagitt'
             ), 
             {
-                'first_name': UserName('Monty', 'Shallow'), 
-                'second_name': UserName('Suzan', 'Magitt')
+                'first_name': TwoPartString('Monty', 'Shallow'), 
+                'second_name': TwoPartString('Suzan', 'Magitt')
             }
         ],
         [
@@ -60,8 +60,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  mh: Maximina Hardinson'
             ), 
             {
-                'first_name': UserName('Angle', 'Knickerbocker'), 
-                'second_name': UserName('Maximina', 'Hardinson')
+                'first_name': TwoPartString('Angle', 'Knickerbocker'), 
+                'second_name': TwoPartString('Maximina', 'Hardinson')
             }
         ],
         [
@@ -72,8 +72,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 'oh: Olamide Heidrun; oheidrun'
             ),
             {
-                'first_name': UserName('Borghild', 'Amadi'),
-                'second_name': UserName('Olamide', 'Heidrun')
+                'first_name': TwoPartString('Borghild', 'Amadi'),
+                'second_name': TwoPartString('Olamide', 'Heidrun')
             }
         ],
 
@@ -88,8 +88,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  mb: Maximo Baribeau; mbaribeau'
             ), 
             {
-                'first_name': UserName('Michel', 'Lola'), 
-                'second_name': UserName('Maximo', 'Baribeau')
+                'first_name': TwoPartString('Michel', 'Lola'), 
+                'second_name': TwoPartString('Maximo', 'Baribeau')
             }
         ],
                 [
@@ -102,8 +102,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  lf: Lanny Fiore; lfiore'
             ), 
             {
-                'first_name': UserName('Klara', 'Bartos'), 
-                'second_name': UserName('Lanny', 'Fiore')
+                'first_name': TwoPartString('Klara', 'Bartos'), 
+                'second_name': TwoPartString('Lanny', 'Fiore')
             }
         ],
         [
@@ -115,8 +115,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  yr: Yadira Reddell; yreddell'
             ), 
             {
-                'first_name': UserName('Yadira', 'Reddell'),
-                'second_name': UserName('Mikel', 'Niederhaus')
+                'first_name': TwoPartString('Yadira', 'Reddell'),
+                'second_name': TwoPartString('Mikel', 'Niederhaus')
             }
         ],
         [
@@ -129,8 +129,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  sk: Shaquita Kenagy; skenagy'
             ), 
             {
-                'first_name': UserName('Shaquita', 'Kenagy'),
-                'second_name': UserName('Berry', 'Zuno')
+                'first_name': TwoPartString('Shaquita', 'Kenagy'),
+                'second_name': TwoPartString('Berry', 'Zuno')
             }
         ],
         [
@@ -143,8 +143,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  gl: Gustavo Laneve; glaneve'
             ), 
             {
-                'first_name': UserName('Gustavo', 'Laneve'), 
-                'second_name': UserName('Alonzo', 'Vandyk')
+                'first_name': TwoPartString('Gustavo', 'Laneve'), 
+                'second_name': TwoPartString('Alonzo', 'Vandyk')
             }
         ],
 
@@ -159,8 +159,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  c: Carrot Cianciolo; carrot'
             ), 
             {
-                'first_name': UserName('Carrot', 'Cianciolo'), 
-                'second_name': UserName('Apple', 'Anderson')
+                'first_name': TwoPartString('Carrot', 'Cianciolo'), 
+                'second_name': TwoPartString('Apple', 'Anderson')
             }
         ],
         [
@@ -172,8 +172,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  abc: The Alphabet; abcdefghijklmnopqrstuvwxyz'
             ),
             {
-                'first_name': UserName('The', 'Alphabet'),
-                'second_name': UserName('Xavier', 'Zamenhof')
+                'first_name': TwoPartString('The', 'Alphabet'),
+                'second_name': TwoPartString('Xavier', 'Zamenhof')
             }
         ],
 
@@ -187,8 +187,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  na: Nobody; nobody'
             ),
             {
-                'first_name': UserName('Tom', ''),
-                'second_name': UserName('Nobody', '')
+                'first_name': TwoPartString('Tom', ''),
+                'second_name': TwoPartString('Nobody', '')
             }
         ],
 
@@ -203,8 +203,8 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  sb: Sally Van Der Bork; sbork'
             ),
             {
-                'first_name': UserName('Hank', 'B. McHillington'),
-                'second_name': UserName('Sally', 'Van Der Bork')
+                'first_name': TwoPartString('Hank', 'B. McHillington'),
+                'second_name': TwoPartString('Sally', 'Van Der Bork')
             }
         ],
 
@@ -219,14 +219,14 @@ class TestGetNamesFromFile(unittest.TestCase):
                 'bc:Benito   Rodolfo   Catalano   '
             ),
             {
-                'first_name': UserName('Fiammetta', 'Nascimbeni'),
-                'second_name': UserName('Benito', 'Rodolfo   Catalano')
+                'first_name': TwoPartString('Fiammetta', 'Nascimbeni'),
+                'second_name': TwoPartString('Benito', 'Rodolfo   Catalano')
             }
         ]
 
     ])
     def test_get_names_from_file(self, first_initials, second_initials, file_contents, names):
-        with patch('builtins.open', mock_open(read_data=file_contents)):
+        with patch('__builtin__.open', mock_open(read_data=file_contents)):
             result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             first_name = result['first_name']
@@ -235,10 +235,10 @@ class TestGetNamesFromFile(unittest.TestCase):
             expected_first_name = names['first_name']
             expected_second_name = names['second_name']
 
-            self.assertEqual(first_name.first_name, expected_first_name.first_name)
-            self.assertEqual(first_name.last_name, expected_first_name.last_name)
-            self.assertEqual(second_name.first_name, expected_second_name.first_name)
-            self.assertEqual(second_name.last_name, expected_second_name.last_name)
+            self.assertEqual(first_name.first_part, expected_first_name.first_part)
+            self.assertEqual(first_name.second_part, expected_first_name.second_part)
+            self.assertEqual(second_name.first_part, expected_second_name.first_part)
+            self.assertEqual(second_name.second_part, expected_second_name.second_part)
 
     @parameterized.expand([
         [
@@ -249,19 +249,19 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  ib: Ilona Bute; ibute',
                 '  ss: Sherry Sokoloski; ssokoloski'
             ), 
-            UserName('Ilona', 'Bute')
+            TwoPartString('Ilona', 'Bute')
         ],
     ])
     def test_get_names_from_file_first_name_doesnt_exist(self, first_initials, second_initials, file_contents, expected_second_name):
-        with patch('builtins.open', mock_open(read_data=file_contents)):
+        with patch('__builtin__.open', mock_open(read_data=file_contents)):
             result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             first_name = result['first_name']
             second_name = result['second_name']
 
             self.assertIsNone(first_name)
-            self.assertEqual(second_name.first_name, expected_second_name.first_name)
-            self.assertEqual(second_name.last_name, expected_second_name.last_name)
+            self.assertEqual(second_name.first_part, expected_second_name.first_part)
+            self.assertEqual(second_name.second_part, expected_second_name.second_part)
 
     @parameterized.expand([
         [
@@ -272,7 +272,7 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  jm: Jae Miners; jminers',
                 '  ml: Malcolm Locks; mlocks'
             ), 
-            UserName('Malcolm', 'Locks')
+            TwoPartString('Malcolm', 'Locks')
         ],
 
         # This logic might become obsolete.
@@ -284,18 +284,18 @@ class TestGetNamesFromFile(unittest.TestCase):
                 '  hn: Hoshi Nakahara; hnakahara',
                 '  hn: Harlan Nye; hnye'
             ),
-            UserName('Harlan', 'Nye')
+            TwoPartString('Harlan', 'Nye')
         ]
     ])
     def test_get_names_from_file_second_name_doesnt_exist(self, first_initials, second_initials, file_contents, expected_first_name):
-        with patch('builtins.open', mock_open(read_data=file_contents)):
+        with patch('__builtin__.open', mock_open(read_data=file_contents)):
             result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             first_name = result['first_name']
             second_name = result['second_name']
 
-            self.assertEqual(first_name.first_name, expected_first_name.first_name)
-            self.assertEqual(first_name.last_name, expected_first_name.last_name)
+            self.assertEqual(first_name.first_part, expected_first_name.first_part)
+            self.assertEqual(first_name.second_part, expected_first_name.second_part)
             self.assertIsNone(second_name)
 
     @parameterized.expand([
@@ -319,7 +319,7 @@ class TestGetNamesFromFile(unittest.TestCase):
         ]
     ])
     def test_get_names_from_file_neither_name_exists(self, first_initials, second_initials, file_contents):
-        with patch('builtins.open', mock_open(read_data=file_contents)):
+        with patch('__builtin__.open', mock_open(read_data=file_contents)):
             result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             self.assertIsNone(result['first_name'])
@@ -330,7 +330,7 @@ class TestGetNamesFromFile(unittest.TestCase):
         'pear_city.html'
     ])
     def test_get_names_from_file_should_use_file_path(self, file_path):
-        with patch('builtins.open', mock_open(read_data='')) as open_mock:
+        with patch('__builtin__.open', mock_open(read_data='')) as open_mock:
             pair_names.get_names_from_file('', '', file_path)
 
             open_mock.assert_called_once_with(file_path)
@@ -341,89 +341,89 @@ class TestParseName(unittest.TestCase):
 
     @parameterized.expand([
         # Basic test cases
-        ['brian', [SplitName('br', 'ian')]],
-        ['BRIAN', [SplitName('BR', 'IAN')]],
+        ['brian', [TwoPartString('br', 'ian')]],
+        ['BRIAN', [TwoPartString('BR', 'IAN')]],
         ['katie', [
-            SplitName('k', 'atie'), 
-            SplitName('kat', 'ie')
+            TwoPartString('k', 'atie'), 
+            TwoPartString('kat', 'ie')
         ]],
         ['ulo', [
-            SplitName('', 'ulo'), 
-            SplitName('ul', 'o')
+            TwoPartString('', 'ulo'), 
+            TwoPartString('ul', 'o')
         ]],
 
         # Silent e at the end of words should not be parsed
-        ['blake', [SplitName('bl', 'ake')]],
-        ['BLAKE', [SplitName('BL', 'AKE')]],
-        ['the', [SplitName('th', 'e')]],
-        ['ye', [SplitName('y', 'e')]],
+        ['blake', [TwoPartString('bl', 'ake')]],
+        ['BLAKE', [TwoPartString('BL', 'AKE')]],
+        ['the', [TwoPartString('th', 'e')]],
+        ['ye', [TwoPartString('y', 'e')]],
         ['KANYE', [
-            SplitName('K', 'ANYE'),
-            SplitName('KANY', 'E')
+            TwoPartString('K', 'ANYE'),
+            TwoPartString('KANY', 'E')
         ]],
-        ['tree', [SplitName('tr', 'ee')]],
-        ['ee', [SplitName('', 'ee')]],
+        ['tree', [TwoPartString('tr', 'ee')]],
+        ['ee', [TwoPartString('', 'ee')]],
 
         # The letter y should be treated as a vowel when it comes before a consonant
         # If it comes before a vowel it is treated as a consonant
-        ['kyle', [SplitName('k', 'yle')]],
-        ['KYLE', [SplitName('K', 'YLE')]],
+        ['kyle', [TwoPartString('k', 'yle')]],
+        ['KYLE', [TwoPartString('K', 'YLE')]],
         ['yani', [
-            SplitName('y', 'ani'), 
-            SplitName('yan', 'i')
+            TwoPartString('y', 'ani'), 
+            TwoPartString('yan', 'i')
         ]],
         ['YANI', [
-            SplitName('Y', 'ANI'), 
-            SplitName('YAN', 'I')
+            TwoPartString('Y', 'ANI'), 
+            TwoPartString('YAN', 'I')
         ]],
         ['quenya', [
-            SplitName('qu', 'enya'),
-            SplitName('queny', 'a')
+            TwoPartString('qu', 'enya'),
+            TwoPartString('queny', 'a')
         ]],
-        ['FLYYY', [SplitName('FL', 'YYY')]],
+        ['FLYYY', [TwoPartString('FL', 'YYY')]],
         ['aya', [
-            SplitName('', 'aya'), 
-            SplitName('ay', 'a')
+            TwoPartString('', 'aya'), 
+            TwoPartString('ay', 'a')
         ]],
 
         # The letter combination qu should be treated as a consonant if
         # a vowel directly follows.
         # If a consonant follows u then q and u are split.
         ['quigley', [
-            SplitName('qu', 'igley'),
-            SplitName('quigl', 'ey')
+            TwoPartString('qu', 'igley'),
+            TwoPartString('quigl', 'ey')
         ]],
         ['QUIGLEY', [
-            SplitName('QU','IGLEY'),
-            SplitName('QUIGL', 'EY')
+            TwoPartString('QU','IGLEY'),
+            TwoPartString('QUIGL', 'EY')
         ]],
         ['quran', [
-            SplitName('q', 'uran'),
-            SplitName('qur', 'an')
+            TwoPartString('q', 'uran'),
+            TwoPartString('qur', 'an')
         ]],
         ['yaquinta', [
-            SplitName('y', 'aquinta'),
-            SplitName('yaqu', 'inta'),
-            SplitName('yaquint', 'a')
+            TwoPartString('y', 'aquinta'),
+            TwoPartString('yaqu', 'inta'),
+            TwoPartString('yaquint', 'a')
         ]],
         ['quya', [
-            SplitName('q', 'uya'),
-            SplitName('quy', 'a')
+            TwoPartString('q', 'uya'),
+            TwoPartString('quy', 'a')
         ]],
-        ['qu', [SplitName('q', 'u')]],
-        ['qy', [SplitName('q', 'y')]],
-        ['uq', [SplitName('', 'uq')]],
+        ['qu', [TwoPartString('q', 'u')]],
+        ['qy', [TwoPartString('q', 'y')]],
+        ['uq', [TwoPartString('', 'uq')]],
 
         # Words that start with a vowel should be parsed before the word starts.
         ['ypsilanti', [
-            SplitName('', 'ypsilanti'), 
-            SplitName('yps', 'ilanti'), 
-            SplitName('ypsil', 'anti'), 
-            SplitName('ypsilant', 'i')
+            TwoPartString('', 'ypsilanti'), 
+            TwoPartString('yps', 'ilanti'), 
+            TwoPartString('ypsil', 'anti'), 
+            TwoPartString('ypsilant', 'i')
         ]],
 
         # If y follows another y, both should be treated as vowels.
-        ['yy', [SplitName('', 'yy')]],
+        ['yy', [TwoPartString('', 'yy')]],
 
         # Ignore strings less than 2 characters
         ['', []],
@@ -432,46 +432,46 @@ class TestParseName(unittest.TestCase):
 
         # Nonalphabetic characters are treated like consonants
         ['two-words', [
-            SplitName('tw', 'o-words'),
-            SplitName('two-w', 'ords')
+            TwoPartString('tw', 'o-words'),
+            TwoPartString('two-w', 'ords')
         ]],
 
         # The silent e rule still applies if e is followed by an nonalphabetic character.
         ['white space', [
-            SplitName('wh', 'ite space'),
-            SplitName('white sp', 'ace')
+            TwoPartString('wh', 'ite space'),
+            TwoPartString('white sp', 'ace')
         ]],
         ['the,exclamation!point', [
-            SplitName('th', 'e,exclamation!point'),
-            SplitName('the,', 'exclamation!point'),
-            SplitName('the,excl', 'amation!point'),
-            SplitName('the,exclam', 'ation!point'),
-            SplitName('the,exclamat', 'ion!point'),
-            SplitName('the,exclamation!p', 'oint')
+            TwoPartString('th', 'e,exclamation!point'),
+            TwoPartString('the,', 'exclamation!point'),
+            TwoPartString('the,excl', 'amation!point'),
+            TwoPartString('the,exclam', 'ation!point'),
+            TwoPartString('the,exclamat', 'ion!point'),
+            TwoPartString('the,exclamation!p', 'oint')
         ]],
         ['notice the middle word', [
-            SplitName('n', 'otice the middle word'),
-            SplitName('not', 'ice the middle word'),
-            SplitName('notice th', 'e middle word'),
-            SplitName('notice the m', 'iddle word'),
-            SplitName('notice the middle w', 'ord')
+            TwoPartString('n', 'otice the middle word'),
+            TwoPartString('not', 'ice the middle word'),
+            TwoPartString('notice th', 'e middle word'),
+            TwoPartString('notice the m', 'iddle word'),
+            TwoPartString('notice the middle w', 'ord')
         ]],
         ['qu eqy tae', [
-            SplitName('q', 'u eqy tae'),
-            SplitName('qu ', 'eqy tae'),
-            SplitName('qu eq', 'y tae'),
-            SplitName('qu eqy t', 'ae')
+            TwoPartString('q', 'u eqy tae'),
+            TwoPartString('qu ', 'eqy tae'),
+            TwoPartString('qu eq', 'y tae'),
+            TwoPartString('qu eqy t', 'ae')
         ]],
-        [' e ', [SplitName(' ', 'e ')]],
+        [' e ', [TwoPartString(' ', 'e ')]],
         ['the thee me ate greate hate query', [
-            SplitName('th', 'e thee me ate greate hate query'),
-            SplitName('the th', 'ee me ate greate hate query'),
-            SplitName('the thee m', 'e ate greate hate query'),
-            SplitName('the thee me ', 'ate greate hate query'),
-            SplitName('the thee me ate gr', 'eate hate query'),
-            SplitName('the thee me ate greate h', 'ate query'),
-            SplitName('the thee me ate greate hate qu', 'ery'),
-            SplitName('the thee me ate greate hate quer', 'y'),
+            TwoPartString('th', 'e thee me ate greate hate query'),
+            TwoPartString('the th', 'ee me ate greate hate query'),
+            TwoPartString('the thee m', 'e ate greate hate query'),
+            TwoPartString('the thee me ', 'ate greate hate query'),
+            TwoPartString('the thee me ate gr', 'eate hate query'),
+            TwoPartString('the thee me ate greate h', 'ate query'),
+            TwoPartString('the thee me ate greate hate qu', 'ery'),
+            TwoPartString('the thee me ate greate hate quer', 'y'),
         ]]
     ])
     def test_parse_name(self, name, split_names):
@@ -489,11 +489,11 @@ class TestGetNameCombinations(unittest.TestCase):
 
     @parameterized.expand([
         # Basic test cases
-        [[SplitName('fr', 'y')], [SplitName('l', 'eela')], ['freela', 'ly']],
-        [[SplitName('b', 'ob')], [SplitName('r', 'oss')], ['boss', 'rob']],
+        [[TwoPartString('fr', 'y')], [TwoPartString('l', 'eela')], ['freela', 'ly']],
+        [[TwoPartString('b', 'ob')], [TwoPartString('r', 'oss')], ['boss', 'rob']],
         [
-            [SplitName('b', 'enjamin'), SplitName('benj', 'amin')],
-            [SplitName('m', 'atthew'), SplitName('matth', 'ew')],
+            [TwoPartString('b', 'enjamin'), TwoPartString('benj', 'amin')],
+            [TwoPartString('m', 'atthew'), TwoPartString('matth', 'ew')],
             [
                 'batthew', 
                 'menjamin', 
@@ -506,16 +506,16 @@ class TestGetNameCombinations(unittest.TestCase):
             ]
         ],
         [
-            [SplitName('qu', 'igley')],
-            [SplitName('sm', 'ith')],
+            [TwoPartString('qu', 'igley')],
+            [TwoPartString('sm', 'ith')],
             ['quith', 'smigley']
         ],
 
         # Duplicates should not be added.
-        [[SplitName('st', 'ar')], [SplitName('st', 'ar')], ['star']],
+        [[TwoPartString('st', 'ar')], [TwoPartString('st', 'ar')], ['star']],
         [
-            [SplitName('s', 'amename'), SplitName('sam', 'ename'), SplitName('samen', 'ame')],
-            [SplitName('s', 'amename'), SplitName('sam', 'ename'), SplitName('samen', 'ame')],
+            [TwoPartString('s', 'amename'), TwoPartString('sam', 'ename'), TwoPartString('samen', 'ame')],
+            [TwoPartString('s', 'amename'), TwoPartString('sam', 'ename'), TwoPartString('samen', 'ame')],
             [
                 'samename',
                 'sename',
@@ -529,56 +529,56 @@ class TestGetNameCombinations(unittest.TestCase):
 
         # A word combination shouldn't be added if the first part or second part is an empty string.
         [
-            [SplitName('', 'eclipse'), SplitName('ecl', 'ipse')],
-            [SplitName('', 'autumn'), SplitName('aut', 'umn')],
+            [TwoPartString('', 'eclipse'), TwoPartString('ecl', 'ipse')],
+            [TwoPartString('', 'autumn'), TwoPartString('aut', 'umn')],
             ['eclautumn', 'auteclipse', 'eclumn', 'autipse']
         ],
         [
-            [SplitName('spr', 'ing'), SplitName('spring', '')],
-            [SplitName('w', 'inter'), SplitName('winter', '')],
+            [TwoPartString('spr', 'ing'), TwoPartString('spring', '')],
+            [TwoPartString('w', 'inter'), TwoPartString('winter', '')],
             ['sprinter', 'wing', 'wintering', 'springinter']
         ],
         [
-            [SplitName('', '')],
-            [SplitName('', '')],
+            [TwoPartString('', '')],
+            [TwoPartString('', '')],
             []
         ],
 
         # Parts that connect on the same letter shouldn't be added, unless there
         # are no other combinations.
         [
-            [SplitName('qu', 'ail')],
-            [SplitName('v', 'ulture'), SplitName('vult', 'ure')],
+            [TwoPartString('qu', 'ail')],
+            [TwoPartString('v', 'ulture'), TwoPartString('vult', 'ure')],
             ['vail', 'vultail']
         ],
         [
-            [SplitName('QU', 'AIL')],
-            [SplitName('V', 'ULTURE'), SplitName('VULT', 'URE')],
+            [TwoPartString('QU', 'AIL')],
+            [TwoPartString('V', 'ULTURE'), TwoPartString('VULT', 'URE')],
             ['VAIL', 'VULTAIL']
         ],
         [
-            [SplitName('ea', 'gle')],
-            [SplitName('seag', 'ull')],
+            [TwoPartString('ea', 'gle')],
+            [TwoPartString('seag', 'ull')],
             ['eaull']
         ],
         [
-            [SplitName('', 'ural owl')],
-            [SplitName('qu', 'ail')],
+            [TwoPartString('', 'ural owl')],
+            [TwoPartString('qu', 'ail')],
             ['quural owl']
         ],
         [
-            [SplitName('qu', 'ail')],
-            [SplitName('', 'ural owl')],
+            [TwoPartString('qu', 'ail')],
+            [TwoPartString('', 'ural owl')],
             ['quural owl']
         ],
         [
-            [SplitName('qu', 'ail')],
-            [SplitName('', 'ural owl'), SplitName('', 'ural owl')],
+            [TwoPartString('qu', 'ail')],
+            [TwoPartString('', 'ural owl'), TwoPartString('', 'ural owl')],
             ['quural owl']
         ],
         [
-            [SplitName('', 'ural owl'), SplitName('', 'ural owl')],
-            [SplitName('qu', 'ail')],
+            [TwoPartString('', 'ural owl'), TwoPartString('', 'ural owl')],
+            [TwoPartString('qu', 'ail')],
             ['quural owl']
         ]
 

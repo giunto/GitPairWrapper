@@ -6,21 +6,16 @@ vowels = 'aeiou'
 
 # --Helper classes-- #
 
-class UserName:
-    first_name = str()
-    last_name = str()
-
-    def __init__(self, first_name, last_name):
-        self.first_name = first_name
-        self.last_name = last_name
-
-class SplitName:
+class TwoPartString:
     first_part = str()
     second_part = str()
 
     def __init__(self, first_part, second_part):
         self.first_part = first_part
         self.second_part = second_part
+
+    def get_full_string(self, seperator=''):
+        return self.first_part + seperator + self.second_part
 
 class CombinationHandler:
     valid_combinations = []
@@ -31,31 +26,19 @@ class CombinationHandler:
         self.invalid_combinations = []
 
     def filter_and_add(self, combination):
-        if (combination.get_name() not in self.valid_combinations and 
+        if (combination.get_full_string() not in self.valid_combinations and 
             combination.first_part != '' and 
             combination.second_part != ''):
 
             if is_valid_combination(combination):
-                self.valid_combinations.append(combination.get_name())
-            elif combination.get_name() not in self.invalid_combinations:
-                self.invalid_combinations.append(combination.get_name())
+                self.valid_combinations.append(combination.get_full_string())
+            elif combination.get_full_string() not in self.invalid_combinations:
+                self.invalid_combinations.append(combination.get_full_string())
 
     def get_combinations(self):
         if self.valid_combinations == []:
             return self.invalid_combinations
         return self.valid_combinations
-
-class CombinedName:
-    first_part = str()
-    second_part = str()
-
-    def __init__(self, first_part, second_part):
-        self.first_part = first_part
-        self.second_part = second_part
-
-    def get_name(self):
-        return self.first_part + self.second_part
-
 
 # --Helper functions and stuff-- #
 
@@ -63,7 +46,7 @@ def create_user_name_from_matches(match):
     names = match.group(2).split(' ', 1)
     first_name = names[0]
     last_name = names[1].strip() if len(names) > 1 else ''
-    return UserName(first_name, last_name)
+    return TwoPartString(first_name, last_name)
 
 def index_is_in_range(index, word):
     return index in range(len(word))
@@ -153,11 +136,11 @@ def parse_name(name):
         return results
 
     if letter_is_vowel(name, 0):
-        results.append(SplitName('', name))
+        results.append(TwoPartString('', name))
 
     for i in range(name_length):
         if i != (name_length - 1) and can_split(name, i):
-            results.append(SplitName(name[:(i + 1)], name[(i + 1):]))
+            results.append(TwoPartString(name[:(i + 1)], name[(i + 1):]))
 
     return results
 
@@ -166,8 +149,8 @@ def get_name_combinations(first_names, second_names):
 
     for first_name in first_names:
         for second_name in second_names:
-            combinations.filter_and_add(CombinedName(first_name.first_part, second_name.second_part))
-            combinations.filter_and_add(CombinedName(second_name.first_part, first_name.second_part))
+            combinations.filter_and_add(TwoPartString(first_name.first_part, second_name.second_part))
+            combinations.filter_and_add(TwoPartString(second_name.first_part, first_name.second_part))
 
     return combinations.get_combinations()
 
