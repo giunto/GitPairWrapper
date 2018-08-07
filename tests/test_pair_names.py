@@ -1,4 +1,4 @@
-import unittest, pair_names
+import unittest, pair_names, sys
 from parameterized import parameterized
 from mock import patch, mock_open
 from pair_names import TwoPartString
@@ -591,6 +591,70 @@ class TestGetNameCombinations(unittest.TestCase):
         self.assertEqual(len(result), len(combinations))
         for name in result:
             self.assertIn(name, result)
+
+class TestMain(unittest.TestCase):
+
+    @parameterized.expand([
+        [
+            ['wm', 'ks', 'pairs.exe'],
+            TwoPartString('Wallis', 'Metz'),
+            TwoPartString('Keira', 'Schuchard'),
+            [
+                [TwoPartString('W', 'allis')],
+                [TwoPartString('M', 'etz')],
+                [TwoPartString('K', 'eira')],
+                [TwoPartString('Sch', 'uchard')]
+            ],
+            [
+                ['Weira', 'Kallis'],
+                ['Muchard', 'Schetz']
+            ],
+            'Weira Muchard'
+        ]
+    ])
+    def test_main(self, arguments, first_name, second_name, parse_name_results, get_name_combinations_results, chosen_name):
+        expected_first_initials = arguments[0]
+        expected_second_initials = arguments[1]
+        expected_file_path = arguments[2]
+
+        parsed_first_name_first_name = parse_name_results[0]
+        parsed_first_name_last_name = parse_name_results[1]
+        parsed_second_name_first_name = parse_name_results[2]
+        parsed_second_name_last_name = parse_name_results[3]
+
+        with patch('sys.argv', arguments):
+            with patch('pair_names.get_names_from_file') as get_names_from_file_mock:
+                with patch('pair_names.parse_name') as parse_name_mock:
+                    with patch('pair_names.get_name_combinations') as get_name_combinations_mock:
+                        with patch('random.choice') as choice_mock:
+                            get_names_from_file_mock.return_value = {
+                                'first_name': first_name,
+                                'second_name': second_name
+                            }
+
+                            parse_name_mock.side_effect = parse_name_results
+
+                            get_name_combinations_mock.side_effect = get_name_combinations_results
+
+                            choice_mock.return_value = chosen_name
+
+                            result = pair_names.main()
+
+                            get_names_from_file_mock.assert_called_once_with(expected_first_initials, expected_second_initials, expected_file_path)
+
+                            parse_name_mock.assert_any_call(first_name.first_part)
+                            parse_name_mock.assert_any_call(first_name.second_part)
+                            parse_name_mock.assert_any_call(second_name.first_part)
+                            parse_name_mock.assert_any_call(second_name.second_part)
+
+                            get_name_combinations_mock.assert_any_call(parsed_first_name_first_name, parsed_second_name_first_name)
+                            get_name_combinations_mock.assert_any_call(parsed_first_name_last_name, parsed_second_name_last_name)
+
+                            choice_mock.assert_any_call(get_name_combinations_results[0])
+                            choice_mock.assert_any_call(get_name_combinations_results[1])
+
+                            self.assertEqual(result, chosen_name)
+
 
 if __name__ == '__main__':
     unittest.main()

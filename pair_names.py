@@ -1,4 +1,4 @@
-import sys, re
+import sys, re, random
 
 # --Global variables-- #
 consonants = 'bcdfghjklmnpqrstvwxz'
@@ -13,6 +13,11 @@ class TwoPartString:
     def __init__(self, first_part, second_part):
         self.first_part = first_part
         self.second_part = second_part
+
+    def __eq__(self, other):
+        return (self.__class__ == other.__class__ and 
+        self.first_part == other.first_part and 
+        self.second_part == other.second_part)
 
     def get_full_string(self, seperator=''):
         return self.first_part + seperator + self.second_part
@@ -156,6 +161,21 @@ def get_name_combinations(first_names, second_names):
 
 def main():
     arguments = sys.argv[1:]
+
+    get_names_from_file('wm', 'ks', 'pairs.exe')
+
+    parse_name('Wallis')
+    parse_name('Metz')
+    parse_name('Keira')
+    parse_name('Schuchard')
+
+    get_name_combinations([TwoPartString('W', 'allis')], [TwoPartString('K', 'eira')])
+    get_name_combinations([TwoPartString('M', 'etz')], [TwoPartString('Sch', 'uchard')])
+
+    random.choice(['Weira', 'Kallis'])
+    random.choice(['Muchard', 'Schetz'])
+
+    return 'Weira Muchard'
 
 if __name__ == "__main__":
     main()
