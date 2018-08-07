@@ -126,7 +126,7 @@ def is_valid_combination(combination):
 # --Main functions-- #
 
 def get_names_from_file(first_initials, second_initials, file_path):
-    pair_file = open('fake_file.txt')
+    pair_file = open(file_path)
 
     pattern = re.compile(r'\s*(\w+)\s*:\s*([^;^\n]+)')
 
@@ -140,7 +140,7 @@ def get_names_from_file(first_initials, second_initials, file_path):
             name = create_user_name_from_matches(matches)
             if initials == first_initials:
                 first_name = name
-            if initials == second_initials:
+            if initials == second_initials and first_initials != second_initials:
                 second_name = name
 
     return {'first_name': first_name, 'second_name': second_name}

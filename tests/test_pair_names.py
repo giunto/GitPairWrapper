@@ -64,6 +64,18 @@ class TestGetNamesFromFile(unittest.TestCase):
                 'second_name': UserName('Maximina', 'Hardinson')
             }
         ],
+        [
+            'ba',
+            'oh',
+            make_fake_file(
+                'ba: Borghild Amadi; bamadi',
+                'oh: Olamide Heidrun; oheidrun'
+            ),
+            {
+                'first_name': UserName('Borghild', 'Amadi'),
+                'second_name': UserName('Olamide', 'Heidrun')
+            }
+        ],
 
         # Names should be indexed by the initials.
         [
@@ -262,6 +274,18 @@ class TestGetNamesFromFile(unittest.TestCase):
             ), 
             UserName('Malcolm', 'Locks')
         ],
+
+        # This logic might become obsolete.
+        [
+            'hn',
+            'hn',
+            make_fake_file(
+                'pair:',
+                '  hn: Hoshi Nakahara; hnakahara',
+                '  hn: Harlan Nye; hnye'
+            ),
+            UserName('Harlan', 'Nye')
+        ]
     ])
     def test_get_names_from_file_second_name_doesnt_exist(self, first_initials, second_initials, file_contents, expected_first_name):
         with patch('builtins.open', mock_open(read_data=file_contents)):
@@ -274,18 +298,42 @@ class TestGetNamesFromFile(unittest.TestCase):
             self.assertEqual(first_name.last_name, expected_first_name.last_name)
             self.assertIsNone(second_name)
 
-    def test_get_names_from_file_neither_name_exists(self):
-        file_contents = make_fake_file(
-            'pair:',
-            '  em: Elisha McCauley; mccauley',
-            '  sm: Saul Mounger; soulmongerer'
-        )
-
+    @parameterized.expand([
+        [
+            'gs',
+            'dh',
+            make_fake_file(
+                'pair:'
+                '  em: Elisha McCauley; mccauley',
+                '  sm: Saul Mounger; soulmongerer'
+            )
+        ],
+        [
+            'qm',
+            'gb',
+            make_fake_file(
+                'pair:'
+                '  qm:',
+                '  gb:'
+            )
+        ]
+    ])
+    def test_get_names_from_file_neither_name_exists(self, first_initials, second_initials, file_contents):
         with patch('builtins.open', mock_open(read_data=file_contents)):
-            result = pair_names.get_names_from_file('gs', 'dh', 'fake_file.txt')
+            result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             self.assertIsNone(result['first_name'])
             self.assertIsNone(result['second_name'])
+
+    @parameterized.expand([
+        'all_the_pairs.txt',
+        'pear_city.html'
+    ])
+    def test_get_names_from_file_should_use_file_path(self, file_path):
+        with patch('builtins.open', mock_open(read_data='')) as open_mock:
+            pair_names.get_names_from_file('', '', file_path)
+
+            open_mock.assert_called_once_with(file_path)
 
 
 
