@@ -596,7 +596,7 @@ class TestMain(unittest.TestCase):
 
     @parameterized.expand([
         [
-            ['wm', 'ks', 'pairs.exe'],
+            ['file_name.py', 'wm', 'ks', 'pairs.exe'],
             TwoPartString('Wallis', 'Metz'),
             TwoPartString('Keira', 'Schuchard'),
             [
@@ -609,13 +609,31 @@ class TestMain(unittest.TestCase):
                 ['Weira', 'Kallis'],
                 ['Muchard', 'Schetz']
             ],
-            'Weira Muchard'
-        ]
+            'Weira',
+            'Muchard'
+        ],
+        [
+            ['file_name.py', 'sw', 'ms', 'pears.sh'],
+            TwoPartString('Seong-Ho', 'Van Wegberg'),
+            TwoPartString('Min', 'Van Der Stoep'),
+            [
+                [TwoPartString('S', 'eong-Ho')],
+                [TwoPartString('Van W', 'egberg')],
+                [TwoPartString('M', 'in')],
+                [TwoPartString('Van Der St', 'oep')]
+            ],
+            [
+                ['Sin', 'Meong-Ho'],
+                ['Van Woep', 'Van Der Stegberg']
+            ],
+            'Meong-Ho',
+            'Van Der Stegberg'
+        ],
     ])
-    def test_main(self, arguments, first_name, second_name, parse_name_results, get_name_combinations_results, chosen_name):
-        expected_first_initials = arguments[0]
-        expected_second_initials = arguments[1]
-        expected_file_path = arguments[2]
+    def test_main(self, arguments, first_name, second_name, parse_name_results, get_name_combinations_results, chosen_first_name, chosen_last_name):
+        expected_first_initials = arguments[1]
+        expected_second_initials = arguments[2]
+        expected_file_path = arguments[3]
 
         parsed_first_name_first_name = parse_name_results[0]
         parsed_first_name_last_name = parse_name_results[1]
@@ -636,7 +654,7 @@ class TestMain(unittest.TestCase):
 
                             get_name_combinations_mock.side_effect = get_name_combinations_results
 
-                            choice_mock.return_value = chosen_name
+                            choice_mock.side_effect = [chosen_first_name, chosen_last_name]
 
                             result = pair_names.main()
 
@@ -653,7 +671,7 @@ class TestMain(unittest.TestCase):
                             choice_mock.assert_any_call(get_name_combinations_results[0])
                             choice_mock.assert_any_call(get_name_combinations_results[1])
 
-                            self.assertEqual(result, chosen_name)
+                            self.assertEqual(result, chosen_first_name + ' ' + chosen_last_name)
 
 
 if __name__ == '__main__':

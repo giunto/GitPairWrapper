@@ -160,22 +160,20 @@ def get_name_combinations(first_names, second_names):
     return combinations.get_combinations()
 
 def main():
-    arguments = sys.argv[1:]
+    names = get_names_from_file(sys.argv[1], sys.argv[2], sys.argv[3])
 
-    get_names_from_file('wm', 'ks', 'pairs.exe')
+    parsed_first_name_first_name = parse_name(names['first_name'].first_part)
+    parsed_first_name_last_name = parse_name(names['first_name'].second_part)
+    parsed_second_name_first_name = parse_name(names['second_name'].first_part)
+    parsed_second_name_last_name = parse_name(names['second_name'].second_part)
 
-    parse_name('Wallis')
-    parse_name('Metz')
-    parse_name('Keira')
-    parse_name('Schuchard')
+    first_name_combinations = get_name_combinations(parsed_first_name_first_name, parsed_second_name_first_name)
+    last_name_combinations = get_name_combinations(parsed_first_name_last_name, parsed_second_name_last_name)
 
-    get_name_combinations([TwoPartString('W', 'allis')], [TwoPartString('K', 'eira')])
-    get_name_combinations([TwoPartString('M', 'etz')], [TwoPartString('Sch', 'uchard')])
+    final_first_name = random.choice(first_name_combinations)
+    final_last_name = random.choice(last_name_combinations)
 
-    random.choice(['Weira', 'Kallis'])
-    random.choice(['Muchard', 'Schetz'])
-
-    return 'Weira Muchard'
+    return final_first_name + ' ' + final_last_name
 
 if __name__ == "__main__":
     main()
