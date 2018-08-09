@@ -140,7 +140,7 @@ def parse_name(name):
     if name_length < 2:
         return results
 
-    if letter_is_vowel(name, 0):
+    if letter_is_vowel(name.lower(), 0):
         results.append(TwoPartString('', name))
 
     for i in range(name_length):
@@ -162,18 +162,24 @@ def get_name_combinations(first_names, second_names):
 def main():
     names = get_names_from_file(sys.argv[1], sys.argv[2], sys.argv[3])
 
-    parsed_first_name_first_name = parse_name(names['first_name'].first_part)
-    parsed_first_name_last_name = parse_name(names['first_name'].second_part)
-    parsed_second_name_first_name = parse_name(names['second_name'].first_part)
-    parsed_second_name_last_name = parse_name(names['second_name'].second_part)
+    if names['first_name'] == None and names['second_name'] == None:
+        return ''
+    if names['second_name'] == None:
+        return names['first_name'].get_full_string(' ')
+    if names['first_name'] == None:
+        return names['second_name'].get_full_string(' ')
 
-    first_name_combinations = get_name_combinations(parsed_first_name_first_name, parsed_second_name_first_name)
-    last_name_combinations = get_name_combinations(parsed_first_name_last_name, parsed_second_name_last_name)
+    first_name_combinations = get_name_combinations(
+        parse_name(names['first_name'].first_part),
+        parse_name(names['second_name'].first_part)
+    )
+    last_name_combinations = get_name_combinations(
+        parse_name(names['first_name'].second_part),
+        parse_name(names['second_name'].second_part)
+    )
 
-    final_first_name = random.choice(first_name_combinations)
-    final_last_name = random.choice(last_name_combinations)
-
-    return final_first_name + ' ' + final_last_name
+    return (random.choice(first_name_combinations) + 
+    ' ' + random.choice(last_name_combinations))
 
 if __name__ == "__main__":
-    main()
+    print(main())

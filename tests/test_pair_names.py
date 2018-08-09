@@ -347,10 +347,6 @@ class TestParseName(unittest.TestCase):
             TwoPartString('k', 'atie'), 
             TwoPartString('kat', 'ie')
         ]],
-        ['ulo', [
-            TwoPartString('', 'ulo'), 
-            TwoPartString('ul', 'o')
-        ]],
 
         # Silent e at the end of words should not be parsed
         ['blake', [TwoPartString('bl', 'ake')]],
@@ -420,6 +416,11 @@ class TestParseName(unittest.TestCase):
             TwoPartString('yps', 'ilanti'), 
             TwoPartString('ypsil', 'anti'), 
             TwoPartString('ypsilant', 'i')
+        ]],
+        ['AJ', [TwoPartString('', 'AJ')]],
+        ['ulo', [
+            TwoPartString('', 'ulo'), 
+            TwoPartString('ul', 'o')
         ]],
 
         # If y follows another y, both should be treated as vowels.
@@ -597,48 +598,66 @@ class TestMain(unittest.TestCase):
     @parameterized.expand([
         [
             ['file_name.py', 'wm', 'ks', 'pairs.exe'],
+
             TwoPartString('Wallis', 'Metz'),
             TwoPartString('Keira', 'Schuchard'),
-            [
-                [TwoPartString('W', 'allis')],
-                [TwoPartString('M', 'etz')],
-                [TwoPartString('K', 'eira')],
-                [TwoPartString('Sch', 'uchard')]
-            ],
-            [
-                ['Weira', 'Kallis'],
-                ['Muchard', 'Schetz']
-            ],
+
+            [TwoPartString('W', 'allis')],
+            [TwoPartString('M', 'etz')],
+            [TwoPartString('K', 'eira')],
+            [TwoPartString('Sch', 'uchard')],
+
+            ['Weira', 'Kallis'],
+            ['Muchard', 'Schetz'],
+
             'Weira',
             'Muchard'
         ],
         [
             ['file_name.py', 'sw', 'ms', 'pears.sh'],
+
             TwoPartString('Seong-Ho', 'Van Wegberg'),
             TwoPartString('Min', 'Van Der Stoep'),
-            [
-                [TwoPartString('S', 'eong-Ho')],
-                [TwoPartString('Van W', 'egberg')],
-                [TwoPartString('M', 'in')],
-                [TwoPartString('Van Der St', 'oep')]
-            ],
-            [
-                ['Sin', 'Meong-Ho'],
-                ['Van Woep', 'Van Der Stegberg']
-            ],
+
+            [TwoPartString('S', 'eong-Ho')],
+            [TwoPartString('Van W', 'egberg')],
+            [TwoPartString('M', 'in')],
+            [TwoPartString('Van Der St', 'oep')],
+
+            ['Sin', 'Meong-Ho'],
+            ['Van Woep', 'Van Der Stegberg'],
+
             'Meong-Ho',
             'Van Der Stegberg'
         ],
     ])
-    def test_main(self, arguments, first_name, second_name, parse_name_results, get_name_combinations_results, chosen_first_name, chosen_last_name):
+    def test_main(
+        self, 
+        arguments, 
+        first_name, 
+        second_name, 
+        expected_parsed_first_name_first_name,
+        expected_parsed_first_name_last_name,
+        expected_parsed_second_name_first_name,
+        expected_parsed_second_name_last_name,
+        expected_first_name_combinations,
+        expected_last_name_combinations,
+        chosen_first_name, 
+        chosen_last_name):
+
         expected_first_initials = arguments[1]
         expected_second_initials = arguments[2]
         expected_file_path = arguments[3]
 
-        parsed_first_name_first_name = parse_name_results[0]
-        parsed_first_name_last_name = parse_name_results[1]
-        parsed_second_name_first_name = parse_name_results[2]
-        parsed_second_name_last_name = parse_name_results[3]
+        def parse_name_side_effect(name):
+            return_values = {
+                first_name.first_part: expected_parsed_first_name_first_name,
+                first_name.second_part: expected_parsed_first_name_last_name,
+                second_name.first_part: expected_parsed_second_name_first_name,
+                second_name.second_part: expected_parsed_second_name_last_name
+            }
+            return return_values[name]
+
 
         with patch('sys.argv', arguments):
             with patch('pair_names.get_names_from_file') as get_names_from_file_mock:
@@ -650,28 +669,148 @@ class TestMain(unittest.TestCase):
                                 'second_name': second_name
                             }
 
-                            parse_name_mock.side_effect = parse_name_results
+                            parse_name_mock.side_effect = parse_name_side_effect
 
-                            get_name_combinations_mock.side_effect = get_name_combinations_results
+                            get_name_combinations_mock.side_effect = [expected_first_name_combinations, expected_last_name_combinations]
 
                             choice_mock.side_effect = [chosen_first_name, chosen_last_name]
 
                             result = pair_names.main()
 
-                            get_names_from_file_mock.assert_called_once_with(expected_first_initials, expected_second_initials, expected_file_path)
+                            get_names_from_file_mock.assert_called_once_with(
+                                expected_first_initials, 
+                                expected_second_initials, 
+                                expected_file_path
+                            )
 
                             parse_name_mock.assert_any_call(first_name.first_part)
                             parse_name_mock.assert_any_call(first_name.second_part)
                             parse_name_mock.assert_any_call(second_name.first_part)
                             parse_name_mock.assert_any_call(second_name.second_part)
 
-                            get_name_combinations_mock.assert_any_call(parsed_first_name_first_name, parsed_second_name_first_name)
-                            get_name_combinations_mock.assert_any_call(parsed_first_name_last_name, parsed_second_name_last_name)
+                            get_name_combinations_mock.assert_any_call(
+                                expected_parsed_first_name_first_name, 
+                                expected_parsed_second_name_first_name
+                            )
+                            get_name_combinations_mock.assert_any_call(
+                                expected_parsed_first_name_last_name, 
+                                expected_parsed_second_name_last_name
+                            )
 
-                            choice_mock.assert_any_call(get_name_combinations_results[0])
-                            choice_mock.assert_any_call(get_name_combinations_results[1])
+                            choice_mock.assert_any_call(expected_first_name_combinations)
+                            choice_mock.assert_any_call(expected_last_name_combinations)
 
                             self.assertEqual(result, chosen_first_name + ' ' + chosen_last_name)
+
+    @parameterized.expand([
+        [
+            ['file_name.py', 'sb', 'na', 'numbers.jpg'],
+            TwoPartString('Sari', 'Bengoechea'),
+            None,
+            'Sari Bengoechea'
+        ],
+        [
+            ['file_name.py', 'cm', 'xx', 'letters.png'],
+            TwoPartString('Corwin', 'El-Mofty'),
+            None,
+            'Corwin El-Mofty'
+        ],
+        [
+            ['file_name.py', 'qw', 'ku', 'doom.wad'],
+            None,
+            TwoPartString('Kaoru', 'Ulfsson'),
+            'Kaoru Ulfsson'
+        ],
+        [
+            ['file_name.py', 'er', 'as', 'misc.xml'],
+            None,
+            TwoPartString('Asenath', 'De Santiago'),
+            'Asenath De Santiago'
+        ],
+        [
+            ['file_name.py', 'gg', 'cx', 'build.gradle'],
+            None,
+            None,
+            ''
+        ],
+        [
+            ['file_name.py', 'za', 'op', 'build.gradle'],
+            None,
+            None,
+            ''
+        ],
+    ])
+    def test_main_missing_name_from_file(self, arguments, first_name, second_name, expected_name):
+        with patch('sys.argv', arguments):
+            with patch('pair_names.get_names_from_file') as get_names_from_file_mock:
+                with patch('pair_names.parse_name') as parse_name_mock:
+                    with patch('pair_names.get_name_combinations') as get_name_combinations_mock:
+                        with patch('random.choice') as choice_mock:
+                            get_names_from_file_mock.return_value = {
+                                'first_name': first_name,
+                                'second_name': second_name
+                            }
+
+                            result = pair_names.main()
+
+                            parse_name_mock.assert_not_called()
+                            get_name_combinations_mock.assert_not_called()
+                            choice_mock.assert_not_called()
+
+                            self.assertEqual(result, expected_name)
+
+    @parameterized.expand([
+        [
+            TwoPartString('Ignace', ''),
+            TwoPartString('Vulfgang', 'Kumar'),
+
+            [TwoPartString('Ign', 'ace')],
+            [TwoPartString('Vulfg', 'ang')],
+
+            ['Ignang', 'Vulfgace']
+        ]
+    ])
+    def test_main_last_name_doesnt_exist(
+        self, 
+        first_name, 
+        second_name, 
+        expected_parsed_first_name_first_name, 
+        expected_parsed_second_name_first_name,
+        first_name_combinations):
+
+        arguments = ['file_name.py', 'ab', 'cd' 'efghijklmnopqrstuvwxyz.gif']
+
+        def parse_name_side_effect(name):
+            return_values = {
+                first_name.first_part: expected_parsed_first_name_first_name,
+                second_name.first_part: expected_parsed_second_name_first_name,
+            }
+            return return_values[name]
+
+        with patch('sys.argv', arguments):
+            with patch('pair_names.get_names_from_file') as get_names_from_file_mock:
+                with patch('pair_names.parse_name') as parse_name_mock:
+                    with patch('pair_names.get_name_combinations') as get_name_combinations_mock:
+                        with patch('random.choice') as choice_mock:
+                            get_names_from_file_mock.return_value = {
+                                'first_name': first_name,
+                                'second_name': second_name
+                            }
+
+                            parse_name_mock.side_effect = parse_name_side_effect
+
+                            get_name_combinations_mock.return_value = first_name_combinations
+
+                            pair_names.main()
+
+                            self.assertEqual(parse_name_mock.call_count, 2)
+                            parse_name_mock.assert_called_with(first_name.first_part)
+                            parse_name_mock.assert_called_with(second_name.first_part)
+
+
+
+
+
 
 
 if __name__ == '__main__':
