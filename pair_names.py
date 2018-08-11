@@ -169,10 +169,16 @@ def main():
     if names['first_name'] == None:
         return names['second_name'].get_full_string(' ')
 
+    if names['first_name'].second_part == '':
+        parse_name(TwoPartString('Vulfgang', 'Kumar'))
+        parse_name(TwoPartString('Ignace', ''))
+
+        get_name_combinations(TwoPartString('Vulfg', 'ang'), TwoPartString('Ign', 'ace'))
+
     first_name_combinations = get_name_combinations(
-        parse_name(names['first_name'].first_part),
-        parse_name(names['second_name'].first_part)
-    )
+            parse_name(names['first_name'].first_part),
+            parse_name(names['second_name'].first_part)
+        )
     last_name_combinations = get_name_combinations(
         parse_name(names['first_name'].second_part),
         parse_name(names['second_name'].second_part)

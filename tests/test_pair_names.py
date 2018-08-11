@@ -767,7 +767,9 @@ class TestMain(unittest.TestCase):
             [TwoPartString('Ign', 'ace')],
             [TwoPartString('Vulfg', 'ang')],
 
-            ['Ignang', 'Vulfgace']
+            ['Ignang', 'Vulfgace'],
+
+            'Ignang'
         ]
     ])
     def test_main_last_name_doesnt_exist(
@@ -776,14 +778,17 @@ class TestMain(unittest.TestCase):
         second_name, 
         expected_parsed_first_name_first_name, 
         expected_parsed_second_name_first_name,
-        first_name_combinations):
+        first_name_combinations,
+        expected_name):
 
-        arguments = ['file_name.py', 'ab', 'cd' 'efghijklmnopqrstuvwxyz.gif']
+        arguments = ['file_name.py', 'ab', 'cd', 'efghijklmnopqrstuvwxyz.gif']
 
         def parse_name_side_effect(name):
             return_values = {
                 first_name.first_part: expected_parsed_first_name_first_name,
+                first_name.second_part: None,
                 second_name.first_part: expected_parsed_second_name_first_name,
+                second_name.second_part: None
             }
             return return_values[name]
 
@@ -801,11 +806,24 @@ class TestMain(unittest.TestCase):
 
                             get_name_combinations_mock.return_value = first_name_combinations
 
-                            pair_names.main()
+                            choice_mock.return_value = expected_name
+
+                            result = pair_names.main()
 
                             self.assertEqual(parse_name_mock.call_count, 2)
                             parse_name_mock.assert_called_with(first_name.first_part)
                             parse_name_mock.assert_called_with(second_name.first_part)
+
+                            get_name_combinations_mock.assert_called_once_with(
+                                expected_parsed_first_name_first_name,
+                                expected_parsed_second_name_first_name
+                            )
+
+                            choice_mock.assert_called_once_with(first_name_combinations)
+
+                            self.assertEqual(result, expected_name)
+
+
 
 
 
