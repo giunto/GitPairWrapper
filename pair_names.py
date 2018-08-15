@@ -163,11 +163,13 @@ def main():
     names = get_names_from_file(sys.argv[1], sys.argv[2], sys.argv[3])
 
     if names['first_name'] == None and names['second_name'] == None:
-        return ''
+        return
     if names['second_name'] == None:
-        return names['first_name'].get_full_string(' ')
+        print(names['first_name'].get_full_string(' '))
+        return
     if names['first_name'] == None:
-        return names['second_name'].get_full_string(' ')
+        print(names['second_name'].get_full_string(' '))
+        return
 
     first_name_combinations = get_name_combinations(
         parse_name(names['first_name'].first_part),
@@ -187,4 +189,4 @@ def main():
     print(name)
 
 if __name__ == "__main__":
-    print(main())
+    main()
