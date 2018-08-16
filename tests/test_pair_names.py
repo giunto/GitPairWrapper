@@ -827,7 +827,7 @@ class TestMain(unittest.TestCase):
         patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
         patch('random.choice') as choice_mock, \
         patch('sys.stdout', new_callable=StringIO) as output_mock:
-        
+
             get_names_from_file_mock.return_value = {
                 'first_name': first_name,
                 'second_name': second_name
@@ -853,6 +853,30 @@ class TestMain(unittest.TestCase):
             choice_mock.assert_called_once_with(first_name_combinations)
 
             self.assertEqual(output_mock.getvalue(), expected_name + '\n')
+
+    @parameterized.expand([
+        [
+            [],
+            []
+        ]
+    ])
+    def test_main_first_name_cannot_be_parsed(self, parsed_first_name, parsed_second_name):
+        
+        arguments = ['fake_file.py', 'as', 'df', 'movie.mov']
+
+        with patch('sys.mockv', arguments), \
+        patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
+        patch('pair_names.parse_name') as parse_name_mock, \
+        patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
+        patch('random.choice') as choice_mock, \
+        patch('sys.stdout', new_callable=StringIO) as output_mock:
+
+            get_names_from_file_mock.return_value = {
+                'first_name': '',
+                'second_name': ''
+            }
+
+            pair_names.main()
 
 if __name__ == '__main__':
     unittest.main()
