@@ -1,7 +1,8 @@
-import unittest, pair_names, sys, StringIO
+import unittest, pair_names, sys
 from parameterized import parameterized
 from mock import patch, mock_open
 from pair_names import TwoPartString
+from io import StringIO
 
 def parse_and_print(name):
     result = pair_names.parse_name(name)
@@ -226,7 +227,7 @@ class TestGetNamesFromFile(unittest.TestCase):
 
     ])
     def test_get_names_from_file(self, first_initials, second_initials, file_contents, names):
-        with patch('__builtin__.open', mock_open(read_data=file_contents)):
+        with patch('builtins.open', mock_open(read_data=file_contents)):
             result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             first_name = result['first_name']
@@ -253,7 +254,7 @@ class TestGetNamesFromFile(unittest.TestCase):
         ],
     ])
     def test_get_names_from_file_first_name_doesnt_exist(self, first_initials, second_initials, file_contents, expected_second_name):
-        with patch('__builtin__.open', mock_open(read_data=file_contents)):
+        with patch('builtins.open', mock_open(read_data=file_contents)):
             result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             first_name = result['first_name']
@@ -288,7 +289,7 @@ class TestGetNamesFromFile(unittest.TestCase):
         ]
     ])
     def test_get_names_from_file_second_name_doesnt_exist(self, first_initials, second_initials, file_contents, expected_first_name):
-        with patch('__builtin__.open', mock_open(read_data=file_contents)):
+        with patch('builtins.open', mock_open(read_data=file_contents)):
             result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             first_name = result['first_name']
@@ -319,7 +320,7 @@ class TestGetNamesFromFile(unittest.TestCase):
         ]
     ])
     def test_get_names_from_file_neither_name_exists(self, first_initials, second_initials, file_contents):
-        with patch('__builtin__.open', mock_open(read_data=file_contents)):
+        with patch('builtins.open', mock_open(read_data=file_contents)):
             result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             self.assertIsNone(result['first_name'])
@@ -330,7 +331,7 @@ class TestGetNamesFromFile(unittest.TestCase):
         'pear_city.html'
     ])
     def test_get_names_from_file_should_use_file_path(self, file_path):
-        with patch('__builtin__.open', mock_open(read_data='')) as open_mock:
+        with patch('builtins.open', mock_open(read_data='')) as open_mock:
             pair_names.get_names_from_file('', '', file_path)
 
             open_mock.assert_called_once_with(file_path)
@@ -659,50 +660,50 @@ class TestMain(unittest.TestCase):
             return return_values[name]
 
 
-        with patch('sys.argv', arguments):
-            with patch('pair_names.get_names_from_file') as get_names_from_file_mock:
-                with patch('pair_names.parse_name') as parse_name_mock:
-                    with patch('pair_names.get_name_combinations') as get_name_combinations_mock:
-                        with patch('random.choice') as choice_mock:
-                            with patch('sys.stdout', new_callable=StringIO.StringIO) as output_mock:
+        with patch('sys.argv', arguments), \
+        patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
+        patch('pair_names.parse_name') as parse_name_mock, \
+        patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
+        patch('random.choice') as choice_mock, \
+        patch('sys.stdout', new_callable=StringIO) as output_mock:
 
-                                get_names_from_file_mock.return_value = {
-                                    'first_name': first_name,
-                                    'second_name': second_name
-                                }
+            get_names_from_file_mock.return_value = {
+                'first_name': first_name,
+                'second_name': second_name
+            }
 
-                                parse_name_mock.side_effect = parse_name_side_effect
+            parse_name_mock.side_effect = parse_name_side_effect
 
-                                get_name_combinations_mock.side_effect = [expected_first_name_combinations, expected_last_name_combinations]
+            get_name_combinations_mock.side_effect = [expected_first_name_combinations, expected_last_name_combinations]
 
-                                choice_mock.side_effect = [chosen_first_name, chosen_last_name]
+            choice_mock.side_effect = [chosen_first_name, chosen_last_name]
 
-                                pair_names.main()
+            pair_names.main()
 
-                                get_names_from_file_mock.assert_called_once_with(
-                                    expected_first_initials, 
-                                    expected_second_initials, 
-                                    expected_file_path
-                                )
+            get_names_from_file_mock.assert_called_once_with(
+                expected_first_initials, 
+                expected_second_initials, 
+                expected_file_path
+            )
 
-                                parse_name_mock.assert_any_call(first_name.first_part)
-                                parse_name_mock.assert_any_call(first_name.second_part)
-                                parse_name_mock.assert_any_call(second_name.first_part)
-                                parse_name_mock.assert_any_call(second_name.second_part)
+            parse_name_mock.assert_any_call(first_name.first_part)
+            parse_name_mock.assert_any_call(first_name.second_part)
+            parse_name_mock.assert_any_call(second_name.first_part)
+            parse_name_mock.assert_any_call(second_name.second_part)
 
-                                get_name_combinations_mock.assert_any_call(
-                                    expected_parsed_first_name_first_name, 
-                                    expected_parsed_second_name_first_name
-                                )
-                                get_name_combinations_mock.assert_any_call(
-                                    expected_parsed_first_name_last_name, 
-                                    expected_parsed_second_name_last_name
-                                )
+            get_name_combinations_mock.assert_any_call(
+                expected_parsed_first_name_first_name, 
+                expected_parsed_second_name_first_name
+            )
+            get_name_combinations_mock.assert_any_call(
+                expected_parsed_first_name_last_name, 
+                expected_parsed_second_name_last_name
+            )
 
-                                choice_mock.assert_any_call(expected_first_name_combinations)
-                                choice_mock.assert_any_call(expected_last_name_combinations)
+            choice_mock.assert_any_call(expected_first_name_combinations)
+            choice_mock.assert_any_call(expected_last_name_combinations)
 
-                                self.assertEqual(output_mock.getvalue(), chosen_first_name + ' ' + chosen_last_name + '\n')
+            self.assertEqual(output_mock.getvalue(), chosen_first_name + ' ' + chosen_last_name + '\n')
 
     @parameterized.expand([
         [
@@ -734,24 +735,25 @@ class TestMain(unittest.TestCase):
     def test_main_missing_name_from_file(self, first_name, second_name, expected_output):
         arguments = ['file_name.py', 'xx', 'yy', 'doom2.wad']
 
-        with patch('sys.argv', arguments):
-            with patch('pair_names.get_names_from_file') as get_names_from_file_mock:
-                with patch('pair_names.parse_name') as parse_name_mock:
-                    with patch('pair_names.get_name_combinations') as get_name_combinations_mock:
-                        with patch('random.choice') as choice_mock:
-                            with patch('sys.stdout', new_callable=StringIO.StringIO) as output_mock:
-                                get_names_from_file_mock.return_value = {
-                                    'first_name': first_name,
-                                    'second_name': second_name
-                                }
+        with patch('sys.argv', arguments), \
+        patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
+        patch('pair_names.parse_name') as parse_name_mock, \
+        patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
+        patch('random.choice') as choice_mock, \
+        patch('sys.stdout', new_callable=StringIO) as output_mock:
 
-                                pair_names.main()
+            get_names_from_file_mock.return_value = {
+                'first_name': first_name,
+                'second_name': second_name
+            }
 
-                                parse_name_mock.assert_not_called()
-                                get_name_combinations_mock.assert_not_called()
-                                choice_mock.assert_not_called()
+            pair_names.main()
 
-                                self.assertEqual(output_mock.getvalue(), expected_output)
+            parse_name_mock.assert_not_called()
+            get_name_combinations_mock.assert_not_called()
+            choice_mock.assert_not_called()
+
+            self.assertEqual(output_mock.getvalue(), expected_output)
 
     @parameterized.expand([
         [
@@ -819,37 +821,38 @@ class TestMain(unittest.TestCase):
             }
             return return_values[name]
 
-        with patch('sys.argv', arguments):
-            with patch('pair_names.get_names_from_file') as get_names_from_file_mock:
-                with patch('pair_names.parse_name') as parse_name_mock:
-                    with patch('pair_names.get_name_combinations') as get_name_combinations_mock:
-                        with patch('random.choice') as choice_mock:
-                            with patch('sys.stdout', new_callable=StringIO.StringIO) as output_mock:
-                                get_names_from_file_mock.return_value = {
-                                    'first_name': first_name,
-                                    'second_name': second_name
-                                }
+        with patch('sys.argv', arguments), \
+        patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
+        patch('pair_names.parse_name') as parse_name_mock, \
+        patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
+        patch('random.choice') as choice_mock, \
+        patch('sys.stdout', new_callable=StringIO) as output_mock:
+        
+            get_names_from_file_mock.return_value = {
+                'first_name': first_name,
+                'second_name': second_name
+            }
 
-                                parse_name_mock.side_effect = parse_name_side_effect
+            parse_name_mock.side_effect = parse_name_side_effect
 
-                                get_name_combinations_mock.return_value = first_name_combinations
+            get_name_combinations_mock.return_value = first_name_combinations
 
-                                choice_mock.return_value = expected_name
+            choice_mock.return_value = expected_name
 
-                                pair_names.main()
+            pair_names.main()
 
-                                self.assertEqual(parse_name_mock.call_count, 2)
-                                parse_name_mock.assert_any_call(first_name.first_part)
-                                parse_name_mock.assert_any_call(second_name.first_part)
+            self.assertEqual(parse_name_mock.call_count, 2)
+            parse_name_mock.assert_any_call(first_name.first_part)
+            parse_name_mock.assert_any_call(second_name.first_part)
 
-                                get_name_combinations_mock.assert_called_once_with(
-                                    expected_parsed_first_name_first_name,
-                                    expected_parsed_second_name_first_name
-                                )
+            get_name_combinations_mock.assert_called_once_with(
+                expected_parsed_first_name_first_name,
+                expected_parsed_second_name_first_name
+            )
 
-                                choice_mock.assert_called_once_with(first_name_combinations)
+            choice_mock.assert_called_once_with(first_name_combinations)
 
-                                self.assertEqual(output_mock.getvalue(), expected_name + '\n')
+            self.assertEqual(output_mock.getvalue(), expected_name + '\n')
 
 if __name__ == '__main__':
     unittest.main()
