@@ -2,7 +2,7 @@ import unittest, pair_names, sys
 from parameterized import parameterized
 from mock import patch, mock_open
 from pair_names import TwoPartString
-from io import StringIO
+from StringIO import StringIO
 
 def parse_and_print(name):
     result = pair_names.parse_name(name)
@@ -227,7 +227,7 @@ class TestGetNamesFromFile(unittest.TestCase):
 
     ])
     def test_get_names_from_file(self, first_initials, second_initials, file_contents, names):
-        with patch('builtins.open', mock_open(read_data=file_contents)):
+        with patch('__builtin__.open', mock_open(read_data=file_contents)):
             result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             first_name = result['first_name']
@@ -254,7 +254,7 @@ class TestGetNamesFromFile(unittest.TestCase):
         ],
     ])
     def test_get_names_from_file_first_name_doesnt_exist(self, first_initials, second_initials, file_contents, expected_second_name):
-        with patch('builtins.open', mock_open(read_data=file_contents)):
+        with patch('__builtin__.open', mock_open(read_data=file_contents)):
             result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             first_name = result['first_name']
@@ -289,7 +289,7 @@ class TestGetNamesFromFile(unittest.TestCase):
         ]
     ])
     def test_get_names_from_file_second_name_doesnt_exist(self, first_initials, second_initials, file_contents, expected_first_name):
-        with patch('builtins.open', mock_open(read_data=file_contents)):
+        with patch('__builtin__.open', mock_open(read_data=file_contents)):
             result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             first_name = result['first_name']
@@ -320,7 +320,7 @@ class TestGetNamesFromFile(unittest.TestCase):
         ]
     ])
     def test_get_names_from_file_neither_name_exists(self, first_initials, second_initials, file_contents):
-        with patch('builtins.open', mock_open(read_data=file_contents)):
+        with patch('__builtin__.open', mock_open(read_data=file_contents)):
             result = pair_names.get_names_from_file(first_initials, second_initials, 'fake_file.txt')
 
             self.assertIsNone(result['first_name'])
@@ -331,7 +331,7 @@ class TestGetNamesFromFile(unittest.TestCase):
         'pear_city.html'
     ])
     def test_get_names_from_file_should_use_file_path(self, file_path):
-        with patch('builtins.open', mock_open(read_data='')) as open_mock:
+        with patch('__builtin__.open', mock_open(read_data='')) as open_mock:
             pair_names.get_names_from_file('', '', file_path)
 
             open_mock.assert_called_once_with(file_path)
@@ -857,14 +857,43 @@ class TestMain(unittest.TestCase):
     @parameterized.expand([
         [
             [],
+            [TwoPartString('K', 'ansas')],
+            [TwoPartString('M', 'issouri')],
+            [TwoPartString('Ill', 'inois')]
+        ],
+        [
+            [TwoPartString('Wash', 'ington')],
+            [],
+            [TwoPartString('Or', 'egon')],
+            [TwoPartString('Cal', 'ifornia')]
+        ],
+        [
+            [TwoPartString('W', 'ales')],
+            [TwoPartString('Engl', 'and')],
+            [],
+            [TwoPartString('Scotl', 'and')]
+        ],
+        [
+            [TwoPartString('Y', 'ukon')],
+            [TwoPartString('Northwest T', 'erritories')],
+            [TwoPartString('N', 'unavut')],
             []
         ]
     ])
-    def test_main_first_name_cannot_be_parsed(self, parsed_first_name, parsed_second_name):
+    def test_main_first_name_cannot_be_parsed(self, parsed_first_name_first_name, parsed_first_name_last_name, parsed_second_name_first_name, parsed_second_name_last_name):
         
         arguments = ['fake_file.py', 'as', 'df', 'movie.mov']
 
-        with patch('sys.mockv', arguments), \
+        def parse_name_side_effect(name):
+            return_values = {
+                'One': parsed_first_name_first_name,
+                'Two': parsed_first_name_last_name,
+                'Three': parsed_second_name_first_name,
+                'Four': parsed_second_name_last_name
+            }
+            return return_values[name]
+
+        with patch('sys.argv', arguments), \
         patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
         patch('pair_names.parse_name') as parse_name_mock, \
         patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
@@ -872,11 +901,19 @@ class TestMain(unittest.TestCase):
         patch('sys.stdout', new_callable=StringIO) as output_mock:
 
             get_names_from_file_mock.return_value = {
-                'first_name': '',
-                'second_name': ''
+                'first_name': TwoPartString('One', 'Two'),
+                'second_name': TwoPartString('Three', 'Four')
             }
 
+            parse_name_mock.side_effect = parse_name_side_effect
+
             pair_names.main()
+
+            get_name_combinations_mock.assert_not_called()
+
+            choice_mock.assert_not_called()
+
+            self.assertEqual(output_mock.getvalue(), '')
 
 if __name__ == '__main__':
     unittest.main()

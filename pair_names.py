@@ -171,17 +171,34 @@ def main():
         print(names['second_name'].get_full_string(' '))
         return
 
+    parsed_first_name_first_name = parse_name(names['first_name'].first_part)
+    parsed_second_name_first_name = parse_name(names['second_name'].first_part)
+
+    if parsed_first_name_first_name == [] or parsed_second_name_first_name == []:
+        return
+
+    if names['first_name'].second_part != '' and names['second_name'].second_part != '':
+        parsed_first_name_last_name = parse_name(names['first_name'].second_part)
+        parsed_second_name_last_name = parse_name(names['second_name'].second_part)
+        if parsed_first_name_last_name == [] or parsed_second_name_last_name == []:
+            return
+    
     first_name_combinations = get_name_combinations(
-        parse_name(names['first_name'].first_part),
-        parse_name(names['second_name'].first_part)
+        parsed_first_name_first_name,
+        parsed_second_name_first_name
     )
 
     name = random.choice(first_name_combinations)
 
     if names['first_name'].second_part != '' and names['second_name'].second_part != '':
+        parsed_first_name_last_name = parse_name(names['first_name'].second_part)
+
+        if parsed_first_name_last_name == []:
+            return
+
         last_name_combinations = get_name_combinations(
-            parse_name(names['first_name'].second_part),
-            parse_name(names['second_name'].second_part)
+            parsed_first_name_last_name,
+            parsed_second_name_last_name
         )
 
         name += ' ' + random.choice(last_name_combinations)
