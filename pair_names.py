@@ -188,7 +188,9 @@ def main():
         parsed_second_name_first_name
     )
 
-    name = random.choice(first_name_combinations)
+    name = str()
+    if first_name_combinations != []:
+        name = random.choice(first_name_combinations)
 
     if names['first_name'].second_part != '' and names['second_name'].second_part != '':
         parsed_first_name_last_name = parse_name(names['first_name'].second_part)
@@ -201,7 +203,12 @@ def main():
             parsed_second_name_last_name
         )
 
-        name += ' ' + random.choice(last_name_combinations)
+        if first_name_combinations == [] and last_name_combinations == []:
+            return
+        elif name == '':
+            name = random.choice(last_name_combinations)
+        elif last_name_combinations != []:
+            name += ' ' + random.choice(last_name_combinations)
 
     print(name)
 
