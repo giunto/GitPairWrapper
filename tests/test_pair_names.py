@@ -709,30 +709,25 @@ class TestMain(unittest.TestCase):
         [
             TwoPartString('Sari', 'Bengoechea'),
             None,
-            'Sari Bengoechea\n'
         ],
         [
             TwoPartString('Corwin', 'El-Mofty'),
             None,
-            'Corwin El-Mofty\n'
         ],
         [
             None,
             TwoPartString('Kaoru', 'Ulfsson'),
-            'Kaoru Ulfsson\n'
         ],
         [
             None,
             TwoPartString('Asenath', 'De Santiago'),
-            'Asenath De Santiago\n'
         ],
         [
             None,
             None,
-            ''
         ],
     ])
-    def test_main_missing_name_from_file(self, first_name, second_name, expected_output):
+    def test_main_missing_name_from_file(self, first_name, second_name):
         arguments = ['file_name.py', 'xx', 'yy', 'doom2.wad']
 
         with patch('sys.argv', arguments), \
@@ -753,7 +748,7 @@ class TestMain(unittest.TestCase):
             get_name_combinations_mock.assert_not_called()
             choice_mock.assert_not_called()
 
-            self.assertEqual(output_mock.getvalue(), expected_output)
+            self.assertEqual(output_mock.getvalue(), '')
 
     @parameterized.expand([
         [
@@ -856,166 +851,245 @@ class TestMain(unittest.TestCase):
 
     @parameterized.expand([
         [
-            [],
-            [TwoPartString('K', 'ansas')],
-            [TwoPartString('M', 'issouri')],
-            [TwoPartString('Ill', 'inois')]
-        ],
-        [
-            [TwoPartString('Wash', 'ington')],
-            [],
-            [TwoPartString('Or', 'egon')],
-            [TwoPartString('Cal', 'ifornia')]
-        ],
-        [
-            [TwoPartString('W', 'ales')],
-            [TwoPartString('Engl', 'and')],
-            [],
-            [TwoPartString('Scotl', 'and')]
-        ],
-        [
-            [TwoPartString('Y', 'ukon')],
-            [TwoPartString('Northwest T', 'erritories')],
-            [TwoPartString('N', 'unavut')],
-            []
+            TwoPartString('Christy', 'Client'),
+            TwoPartString('', 'Agency'),
         ]
     ])
-    def test_main_name_cannot_be_parsed(self, parsed_first_name_first_name, parsed_first_name_last_name, parsed_second_name_first_name, parsed_second_name_last_name):
+    def test_main_first_name_doesnt_exist(self, first_name, second_name):
+
+        arguments = ['aa', 'aa', 'aaaa.html']
+
+        with patch('sys.argv', arguments), \
+        patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
+        patch('pair_names.parse_name') as parse_name_mock, \
+        patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
+        patch('random.choice') as choice_mock, \
+        patch('sys.stdout', new_callable=StringIO) as output_mock:
+
+            get_names_from_file_mock.return_value = {
+                first_name,
+                second_name
+            }
+
+            pair_names.main()
+
+            parse_name_mock.assert_not_called()
+
+            
+
+
+    # @parameterized.expand([
+    #     [
+    #         [],
+    #         [TwoPartString('K', 'ansas')],
+    #         [TwoPartString('M', 'issouri')],
+    #         [TwoPartString('Ill', 'inois')]
+    #     ],
+    #     [
+    #         [TwoPartString('Wash', 'ington')],
+    #         [],
+    #         [TwoPartString('Or', 'egon')],
+    #         [TwoPartString('Cal', 'ifornia')]
+    #     ],
+    #     [
+    #         [TwoPartString('W', 'ales')],
+    #         [TwoPartString('Engl', 'and')],
+    #         [],
+    #         [TwoPartString('Scotl', 'and')]
+    #     ],
+    #     [
+    #         [TwoPartString('Y', 'ukon')],
+    #         [TwoPartString('Northwest T', 'erritories')],
+    #         [TwoPartString('N', 'unavut')],
+    #         []
+    #     ]
+    # ])
+    # def test_main_name_cannot_be_parsed(self, 
+    #     parsed_first_name_first_name, 
+    #     parsed_first_name_last_name, 
+    #     parsed_second_name_first_name, 
+    #     parsed_second_name_last_name):
         
-        arguments = ['fake_file.py', 'as', 'df', 'movie.mov']
+    #     arguments = ['fake_file.py', 'as', 'df', 'movie.mov']
 
-        def parse_name_side_effect(name):
-            return_values = {
-                'One': parsed_first_name_first_name,
-                'Two': parsed_first_name_last_name,
-                'Three': parsed_second_name_first_name,
-                'Four': parsed_second_name_last_name
-            }
-            return return_values[name]
+    #     def parse_name_side_effect(name):
+    #         return_values = {
+    #             'One': parsed_first_name_first_name,
+    #             'Two': parsed_first_name_last_name,
+    #             'Three': parsed_second_name_first_name,
+    #             'Four': parsed_second_name_last_name
+    #         }
+    #         return return_values[name]
 
-        with patch('sys.argv', arguments), \
-        patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
-        patch('pair_names.parse_name') as parse_name_mock, \
-        patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
-        patch('random.choice') as choice_mock, \
-        patch('sys.stdout', new_callable=StringIO) as output_mock:
+    #     with patch('sys.argv', arguments), \
+    #     patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
+    #     patch('pair_names.parse_name') as parse_name_mock, \
+    #     patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
+    #     patch('random.choice') as choice_mock, \
+    #     patch('sys.stdout', new_callable=StringIO) as output_mock:
 
-            get_names_from_file_mock.return_value = {
-                'first_name': TwoPartString('One', 'Two'),
-                'second_name': TwoPartString('Three', 'Four')
-            }
+    #         get_names_from_file_mock.return_value = {
+    #             'first_name': TwoPartString('One', 'Two'),
+    #             'second_name': TwoPartString('Three', 'Four')
+    #         }
 
-            parse_name_mock.side_effect = parse_name_side_effect
+    #         parse_name_mock.side_effect = parse_name_side_effect
 
-            pair_names.main()
+    #         pair_names.main()
 
-            get_name_combinations_mock.assert_not_called()
+    #         get_name_combinations_mock.assert_not_called()
 
-            choice_mock.assert_not_called()
+    #         choice_mock.assert_not_called()
 
-            self.assertEqual(output_mock.getvalue(), '')
+    #         self.assertEqual(output_mock.getvalue(), '')
 
-    @parameterized.expand([
-        [
-            ['Chicago', 'Milwaukee'],
-            'Chicago'
-        ],
-        [
-            ['Denver', 'Colorado Springs'],
-            'Colorado Springs'
-        ]
-    ])
-    def test_main_no_first_name_combinations_exist(self, expected_last_name_combinations, expected_chosen_name):
+    # @parameterized.expand([
+    #     [
+    #         ['Chicago', 'Milwaukee'],
+    #         []
+    #     ],
+    #     [
+    #         ['Denver', 'Colorado Springs'],
+    #         []
+    #     ],
+    #     [
+    #         [],
+    #         ['Dallas', 'Fort Worth']
+    #     ],
+    #     [
+    #         [],
+    #         ['Seattle', 'Tacoma']
+    #     ],
+    #     [
+    #         [],
+    #         []
+    #     ]
+    # ])
+    # def test_main_combination_does_not_exist(self, first_name_combinations, last_name_combinations):
 
-        arguments = ['fake_file.py', 'qe', 'tu', 'build.gradle']
+    #     arguments = ['fake_file.py', 'zx', 'cv', 'minesweeper.exe']
 
-        with patch('sys.argv', arguments), \
-        patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
-        patch('pair_names.parse_name') as parse_name_mock, \
-        patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
-        patch('random.choice') as choice_mock, \
-        patch('sys.stdout', new_callable=StringIO) as output_mock:
+    #     with patch('sys.argv', arguments), \
+    #     patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
+    #     patch('pair_names.parse_name') as parse_name_mock, \
+    #     patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
+    #     patch('random.choice') as choice_mock, \
+    #     patch('sys.stdout', new_callable=StringIO) as output_mock:
 
-            get_names_from_file_mock.return_value = {
-                'first_name': TwoPartString('Eins', 'Zwei'),
-                'second_name': TwoPartString('Drei', 'Vier')
-            }
+    #         get_names_from_file_mock.return_value = {
+    #             'first_name': TwoPartString('Mindy', 'Bradner'),
+    #             'second_name': TwoPartString('Fox', 'Cobb')
+    #         }
 
-            parse_name_mock.return_value = [TwoPartString('Deutschl', 'and')]
+    #         parse_name_mock.return_value = ['Split', 'Name']
 
-            get_name_combinations_mock.side_effect = [[], expected_last_name_combinations]
+    #         get_name_combinations_mock.side_effect = [first_name_combinations, last_name_combinations]
 
-            choice_mock.return_value = expected_chosen_name
+    #         pair_names.main()
 
-            pair_names.main()
+    #         self.assertEqual(output_mock.getvalue(), '')
 
-            choice_mock.assert_called_once_with(expected_last_name_combinations)
+    # @parameterized.expand([
+    #     [
+    #         ['Chicago', 'Milwaukee'],
+    #         'Chicago'
+    #     ],
+    #     [
+    #         ['Denver', 'Colorado Springs'],
+    #         'Colorado Springs'
+    #     ]
+    # ])
+    # def test_main_no_first_name_combinations_exist(self, expected_last_name_combinations, expected_chosen_name):
 
-            self.assertEqual(output_mock.getvalue(), expected_chosen_name + '\n')
+    #     arguments = ['fake_file.py', 'qe', 'tu', 'build.gradle']
 
-    @parameterized.expand([
-        [
-            ['Dallas', 'Fort Worth'],
-            'Dallas'
-        ],
-        [
-            ['Seattle', 'Bellevue'],
-            'Bellevue'
-        ]
-    ])
-    def test_main_no_last_name_combinations_exist(self, expected_first_name_combinations, expected_chosen_name):
+    #     with patch('sys.argv', arguments), \
+    #     patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
+    #     patch('pair_names.parse_name') as parse_name_mock, \
+    #     patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
+    #     patch('random.choice') as choice_mock, \
+    #     patch('sys.stdout', new_callable=StringIO) as output_mock:
 
-        arguments = ['fake_file.py', 'ww', 'ww', 'wwwwwwww']
+    #         get_names_from_file_mock.return_value = {
+    #             'first_name': TwoPartString('Eins', 'Zwei'),
+    #             'second_name': TwoPartString('Drei', 'Vier')
+    #         }
 
-        with patch('sys.argv', arguments), \
-        patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
-        patch('pair_names.parse_name') as parse_name_mock, \
-        patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
-        patch('random.choice') as choice_mock, \
-        patch('sys.stdout', new_callable=StringIO) as output_mock:
+    #         parse_name_mock.return_value = [TwoPartString('Deutschl', 'and')]
 
-            get_names_from_file_mock.return_value = {
-                'first_name': TwoPartString('A', 'B'),
-                'second_name': TwoPartString('C', 'D')
-            }
+    #         get_name_combinations_mock.side_effect = [[], expected_last_name_combinations]
 
-            parse_name_mock.return_value = [TwoPartString('Alph', 'abet')]
+    #         choice_mock.return_value = expected_chosen_name
 
-            get_name_combinations_mock.side_effect = [expected_first_name_combinations, []]
+    #         pair_names.main()
 
-            choice_mock.return_value = expected_chosen_name
+    #         choice_mock.assert_called_once_with(expected_last_name_combinations)
 
-            pair_names.main()
+    #         self.assertEqual(output_mock.getvalue(), expected_chosen_name + '\n')
 
-            choice_mock.assert_called_once_with(expected_first_name_combinations)
+    # @parameterized.expand([
+    #     [
+    #         ['Dallas', 'Fort Worth'],
+    #         'Dallas'
+    #     ],
+    #     [
+    #         ['Seattle', 'Bellevue'],
+    #         'Bellevue'
+    #     ]
+    # ])
+    # def test_main_no_last_name_combinations_exist(self, expected_first_name_combinations, expected_chosen_name):
 
-            self.assertEqual(output_mock.getvalue(), expected_chosen_name + '\n')
+    #     arguments = ['fake_file.py', 'ww', 'ww', 'wwwwwwww']
 
-    def test_main_no_combinations_exist(self):
+    #     with patch('sys.argv', arguments), \
+    #     patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
+    #     patch('pair_names.parse_name') as parse_name_mock, \
+    #     patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
+    #     patch('random.choice') as choice_mock, \
+    #     patch('sys.stdout', new_callable=StringIO) as output_mock:
 
-        arguments = ['fake_file.py', 'xx', 'xx', 'xxxxxxxx']
+    #         get_names_from_file_mock.return_value = {
+    #             'first_name': TwoPartString('A', 'B'),
+    #             'second_name': TwoPartString('C', 'D')
+    #         }
 
-        with patch('sys.argv', arguments), \
-        patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
-        patch('pair_names.parse_name') as parse_name_mock, \
-        patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
-        patch('random.choice') as choice_mock, \
-        patch('sys.stdout', new_callable=StringIO) as output_mock:
+    #         parse_name_mock.return_value = [TwoPartString('Alph', 'abet')]
 
-            get_names_from_file_mock.return_value = {
-                'first_name': TwoPartString('Fake', 'Name'),
-                'second_name': TwoPartString('Anonymous', 'Pseudonym')
-            }
+    #         get_name_combinations_mock.side_effect = [expected_first_name_combinations, []]
 
-            parse_name_mock.return_value = [TwoPartString('Split', 'Name')]
+    #         choice_mock.return_value = expected_chosen_name
 
-            get_name_combinations_mock.side_effect = [[], []]
+    #         pair_names.main()
 
-            pair_names.main()
+    #         choice_mock.assert_called_once_with(expected_first_name_combinations)
 
-            choice_mock.assert_not_called()
+    #         self.assertEqual(output_mock.getvalue(), expected_chosen_name + '\n')
 
-            self.assertEqual(output_mock.getvalue(), '')
+    # def test_main_no_combinations_exist(self):
+
+        # arguments = ['fake_file.py', 'xx', 'xx', 'xxxxxxxx']
+
+        # with patch('sys.argv', arguments), \
+        # patch('pair_names.get_names_from_file') as get_names_from_file_mock, \
+        # patch('pair_names.parse_name') as parse_name_mock, \
+        # patch('pair_names.get_name_combinations') as get_name_combinations_mock, \
+        # patch('random.choice') as choice_mock, \
+        # patch('sys.stdout', new_callable=StringIO) as output_mock:
+
+        #     get_names_from_file_mock.return_value = {
+        #         'first_name': TwoPartString('Fake', 'Name'),
+        #         'second_name': TwoPartString('Anonymous', 'Pseudonym')
+        #     }
+
+        #     parse_name_mock.return_value = [TwoPartString('Split', 'Name')]
+
+        #     get_name_combinations_mock.side_effect = [[], []]
+
+        #     pair_names.main()
+
+        #     choice_mock.assert_not_called()
+
+        #     self.assertEqual(output_mock.getvalue(), '')
 
 if __name__ == '__main__':
     unittest.main()
